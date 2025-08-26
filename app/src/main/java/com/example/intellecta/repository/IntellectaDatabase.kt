@@ -10,4 +10,4 @@ import androidx.room.RoomDatabase
 abstract class IntellectaDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
     abstract fun fileDao(): FileDao
-}
+} 

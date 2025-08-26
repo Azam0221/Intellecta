@@ -37,13 +37,6 @@ class NoteViewModel(
         _uiNoteState.update { it.copy(category = newValue) }
     }
 
-    fun addFile(file: FileMeta) {
-        _uiNoteState.update { it.copy(attachedFiles = it.attachedFiles + file) }
-    }
-
-    fun removeFile(file: FileMeta) {
-        _uiNoteState.update { it.copy(attachedFiles = it.attachedFiles - file) }
-    }
 
     fun saveNote() {
         viewModelScope.launch {

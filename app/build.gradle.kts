@@ -61,6 +61,7 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.9.3")
 
+
     implementation("androidx.room:room-runtime:2.7.2")
     implementation("androidx.room:room-ktx:2.7.2")
     kapt("androidx.room:room-compiler:2.7.2")
@@ -70,7 +71,6 @@ dependencies {
     // Koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.koin.androidx.viewmodel)
 
 
 // TFLite for on-device AI
@@ -78,4 +78,8 @@ dependencies {
 
 // Encryption for local storage
     implementation("androidx.security:security-crypto:1.1.0-alpha04")
+
+ 
+
+
 }

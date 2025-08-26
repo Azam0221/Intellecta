@@ -1,5 +1,9 @@
 package com.example.intellecta.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,10 +19,19 @@ fun Navigation(){
         navController = navCtrl,
         startDestination = Screens.HomeScreen.route
     ){
-        composable(Screens.HomeScreen.route){
+        composable(Screens.HomeScreen.route
+           ){
             HomeScreen(navCtrl)
         }
-        composable(Screens.AddNoteScreen.route){
+        composable(Screens.AddNoteScreen.route,
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+            },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) + fadeIn() },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }){
             AddNoteScreen()
         }
     }
