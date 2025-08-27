@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.aibrain.ui.theme.surfaceContainerLight
 import com.example.intellecta.navigation.Screens
+import com.example.intellecta.ui.components.RowButton
 
 @Composable
 fun HomeScreen(navCtrl :NavHostController) {
@@ -72,7 +73,7 @@ fun HomeScreen(navCtrl :NavHostController) {
             ) {
 
                 Text(
-                    text = "AI Brain",
+                    text = "Intellecta",
                     textAlign = TextAlign.Center,
                     fontSize = 22.sp,
                     textDecoration = TextDecoration.None,
@@ -177,7 +178,6 @@ fun HomeScreen(navCtrl :NavHostController) {
                         Alignment.CenterHorizontally
                     ),
                     modifier = Modifier
-
                         .width(112.dp)
                         .height(40.dp)
                         .clip(
@@ -252,6 +252,8 @@ fun HomeScreen(navCtrl :NavHostController) {
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal,
             )
+            Spacer(modifier = Modifier.padding(vertical = 12.dp))
+            RowButton("NoteList") {navCtrl.navigate(Screens.NotesListScreen.route)}
         }
 
 
