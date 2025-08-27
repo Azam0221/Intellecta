@@ -23,5 +23,5 @@ data class FileMeta(
     var noteId : Int,
     var fileName : String,
     var fileType : String,
-    var fileData : ByteArray
+    var fileData : String
 )

@@ -1,5 +1,6 @@
 package com.example.intellecta.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.intellecta.model.FileMeta
@@ -15,52 +16,99 @@ class NoteViewModel(
     private val noteDao: NoteDao,
     private val fileDao: FileDao
  ) : ViewModel() {
-    private val _uiNoteState = MutableStateFlow(Note())
-    val uiNoteState: StateFlow<Note> = _uiNoteState
+    private val _uiState = MutableStateFlow(NoteUiState())
+    val uiState: StateFlow<NoteUiState> = _uiState
 
 
     // NOTE entries UPDATE
 
-    fun onTitleChange(newValue: String) {
-        _uiNoteState.update { it.copy(title = newValue) }
+    fun updateNoteField(update: (Note) -> Note) {
+        _uiState.update { it.copy(note = update(it.note)) }
     }
 
-    fun onContentChange(newValue: String) {
-        _uiNoteState.update { it.copy(content = newValue) }
-    }
 
-    fun onSummaryChange(newValue: String) {
-        _uiNoteState.update { it.copy(summary = newValue) }
-    }
-
-    fun onCategoryChange(newValue: String) {
-        _uiNoteState.update { it.copy(category = newValue) }
-    }
+//    fun onTitleChange(newValue: String) {
+//        _uiState.value = _uiState.value.copy(
+//            note = _uiState.value.note.copy(title = newValue)
+//        )
+//    }
+//
+//    fun onContentChange(newValue: String) {
+//        _uiState.value = _uiState.value.copy(
+//            note = _uiState.value.note.copy(content = newValue)
+//        )
+//    }
+//
+//    fun onSummaryChange(newValue: String) {
+//        _uiState.value = _uiState.value.copy(
+//            note = _uiState.value.note.copy(summary = newValue)
+//        )
+//    }
+//
+//    fun onCategoryChange(newValue: String) {
+//        _uiState.value = _uiState.value.copy(
+//            note = _uiState.value.note.copy(category = newValue)
+//        )
+//    }
 
 
     fun saveNote() {
         viewModelScope.launch {
-            val note = Note(
-                id = _uiNoteState.value.id,
-                title = _uiNoteState.value.title,
-                content = _uiNoteState.value.content,
-                summary = _uiNoteState.value.summary,
-                category = _uiNoteState.value.category,
-                timeStamp = System.currentTimeMillis()
-            )
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try {
+                val note = buildNote()
+                noteDao.insertNote(note)
+                _uiState.value = _uiState.value.copy(isSaved = true, error = null , isLoading = false )
+                Log.d("note" ,"notes added $note")
+            }
+            catch (e : Exception){
+                _uiState.value = _uiState.value.copy(error = e.message)
+            }
+        }
+    }
+
+    fun loadAllNote(noteId : Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try {
+                val note = noteDao.getNote(noteId)
+                _uiState.value = _uiState.value.copy(
+                    note = note,
+                    isLoading = false,
+                    error = null
+                )
+                Log.d("noteLoad", "note loaded $note")
+            } catch (e: Exception){
+                _uiState.value = _uiState.value.copy(error = e.message)
+            }
 
         }
     }
 
+    fun updateNote(note: Note){
+        viewModelScope.launch {
+            val note = buildNote()
+            noteDao.updateNote(note)
+            Log.d("note" ,"notes updated $note")
+        }
+    }
+
     private fun buildNote(): Note{
-        val state = _uiNoteState.value
+        val state = _uiState.value
         return Note(
-            id = state.id,
-            title = state.title,
-            content = state.content,
-            summary = state.summary,
-            category = state.category,
+            id = state.note.id,
+            title = state.note.title,
+            content = state.note.content,
+            summary = state.note.summary,
+            category = state.note.category,
             timeStamp = System.currentTimeMillis()
         )
     }
 }
+
+data class NoteUiState(
+    val note: Note = Note(),
+    val isLoading: Boolean = false,
+    val isSaved: Boolean = false,
+    val error: String? = null
+)
