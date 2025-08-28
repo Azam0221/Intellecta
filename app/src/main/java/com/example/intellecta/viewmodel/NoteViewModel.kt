@@ -3,18 +3,17 @@ package com.example.intellecta.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.intellecta.model.FileMeta
 import com.example.intellecta.model.Note
-import com.example.intellecta.repository.FileDao
-import com.example.intellecta.repository.NoteDao
+import com.example.intellecta.dao.FileDao
+import com.example.intellecta.dao.NoteDao
+import com.example.intellecta.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NoteViewModel(
-    private val noteDao: NoteDao,
-    private val fileDao: FileDao
+    private val noteRepository: NoteRepository
  ) : ViewModel() {
     private val _uiState = MutableStateFlow(NoteUiState())
     val uiState: StateFlow<NoteUiState> = _uiState
@@ -57,7 +56,7 @@ class NoteViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 val note = buildNote()
-                noteDao.insertNote(note)
+                noteRepository.insertNote(note)
                 _uiState.value = _uiState.value.copy(isSaved = true, error = null , isLoading = false )
                 Log.d("note" ,"notes added $note")
             }
@@ -71,7 +70,7 @@ class NoteViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val note = noteDao.getNote(noteId)
+                val note = noteRepository.getNote(noteId)
                 _uiState.value = _uiState.value.copy(
                     note = note,
                     isLoading = false,
@@ -88,7 +87,7 @@ class NoteViewModel(
     fun updateNote(note: Note){
         viewModelScope.launch {
             val note = buildNote()
-            noteDao.updateNote(note)
+            noteRepository.updateNote(note)
             Log.d("note" ,"notes updated $note")
         }
     }

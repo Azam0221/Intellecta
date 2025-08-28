@@ -1,7 +1,7 @@
 [versions]
 agp = "8.7.3"
 koinAndroid = "4.0.0"
-koinAndroidxCompose = "3.4.3"
+koinAndroidxCompose = "4.0.0"
 kotlin = "2.0.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"

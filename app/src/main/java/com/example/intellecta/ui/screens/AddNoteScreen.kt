@@ -2,6 +2,7 @@ package com.example.intellecta.ui.screens
 
 import android.widget.Button
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.Switch
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Center
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -32,6 +35,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -46,12 +51,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intellecta.R
+import com.example.intellecta.viewmodel.NoteViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNoteScreen(
 
 ) {
+    val viewModel: NoteViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
     val scrollState = rememberScrollState()
     Scaffold() { innerPadding ->
         Column(modifier = Modifier
@@ -78,9 +88,11 @@ fun AddNoteScreen(
 
             // Title Field
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Title") },
+                value = uiState.note.title,
+                onValueChange = { newValue ->
+                    viewModel.updateNoteField { it.copy(title = newValue)}
+                                },
+                placeholder = { Text("Title") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp)),
@@ -94,9 +106,11 @@ fun AddNoteScreen(
 
             // Content Field
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Content") },
+                value = uiState.note.content,
+                onValueChange = { newValue ->
+                    viewModel.updateNoteField { it.copy(content = newValue)}
+                },
+                placeholder = { Text("Content") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
@@ -114,22 +128,38 @@ fun AddNoteScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                IconButton(onClick = {}) {
-                   // Icon(painter = painterResource(R.drawable.outline_mic_none_24), contentDescription = "Voice")
+                IconButton(onClick = {
+
+                },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)))
+                { Icon(painter = painterResource(R.drawable.outline_keyboard_voice_24), contentDescription = "Voice")
                 }
+
                 Text("Voice")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                IconButton(onClick = {}) {
-                   // Icon(painter = painterResource(R.drawable.outline_image_24), contentDescription = "Image")
+                IconButton(onClick = {},
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                    ) {
+                    Icon(painter = painterResource(R.drawable.outline_image_24), contentDescription = "Image")
                 }
                 Text("Image")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                IconButton(onClick = {}) {
-                  //  Icon(painter = painterResource(R.drawable.outline_attach_file_24), contentDescription = "Attach")
+                IconButton(onClick = {},
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))) {
+                    Icon(painter = painterResource(R.drawable.outline_attach_file_24), contentDescription = "Attach")
                 }
                 Text("Attach")
             }
@@ -171,28 +201,23 @@ fun AddNoteScreen(
                         .alpha(1f)
                 ) {
 
-
                     Text(
                         text = "Cancel",
                         textAlign = TextAlign.Center,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                     )
-
                 }
-
-
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
                     modifier = Modifier
-
                         .width(80.dp)
                         .height(40.dp)
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 20.dp))
                         .background(color = MaterialTheme.colorScheme.secondaryContainer)
                         .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
+                        .clickable { viewModel.saveNote() }
                         .alpha(1f)
                 ) {
 

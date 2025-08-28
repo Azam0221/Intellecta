@@ -1,4 +1,4 @@
-package com.example.intellecta.repository
+package com.example.intellecta.dao
 
 
 import com.example.intellecta.model.Note

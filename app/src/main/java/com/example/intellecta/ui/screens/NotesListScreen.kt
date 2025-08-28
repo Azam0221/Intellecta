@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intellecta.navigation.Screens
+import com.example.intellecta.ui.components.NoteCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,6 +90,13 @@ fun NoteListScreen(){
                     containerColor = Color(0xFFF5F6F8)
                 )
             )
+            Spacer(modifier = Modifier.padding(vertical = 16.dp))
+
+            LazyColumn(modifier = Modifier.padding(top = 16.dp)){
+                items(4){ item ->
+                    NoteCard("Project kickoff","Meeting notes from the project")
+                }
+            }
 
         }
     }
