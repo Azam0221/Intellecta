@@ -31,6 +31,7 @@ fun RowButton(name: String, onClick:() -> Unit){
             Alignment.CenterHorizontally
         ),
         modifier = Modifier
+            .clickable { onClick() }
             .width(112.dp)
             .height(40.dp)
             .clip(
@@ -44,7 +45,6 @@ fun RowButton(name: String, onClick:() -> Unit){
             .background(color = MaterialTheme.colorScheme.secondaryContainer)
             .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
             .alpha(1f)
-            .clickable { onClick() }
     ) {
 
 

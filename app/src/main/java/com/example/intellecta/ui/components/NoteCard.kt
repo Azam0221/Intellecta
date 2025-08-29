@@ -2,6 +2,7 @@ package com.example.intellecta.ui.components
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.sharp.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,20 +24,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aibrain.ui.theme.surfaceContainerLight
 import com.example.intellecta.R
 
 @Composable
-fun NoteCard(title:String, description : String){
+fun NoteCard(title:String, description : String,onClick: () -> Unit){
     Column {
-        Row(modifier = Modifier.fillMaxWidth()){
-            Column (modifier = Modifier.padding(top = 4.dp)) {
+        Row(modifier = Modifier.fillMaxWidth()
+            .clickable { onClick() }){
+            Column (modifier = Modifier.padding(top = 2.dp)) {
                 Box(
                     modifier = Modifier
                         .padding(top = 10.dp)
-                        .size(44.dp)
+                        .size(50.dp)
                         .background(color = surfaceContainerLight, shape = RoundedCornerShape(6.dp))
                         .clip(RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
@@ -49,32 +53,29 @@ fun NoteCard(title:String, description : String){
 
             Spacer(modifier = Modifier.padding(horizontal = 12.dp))
 
-            Column() {
+            Column( modifier = Modifier.weight(1f)) {
 
                 Text(
                     text = title,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold
+                    maxLines = 1,
+                    fontSize = 18.sp,
                 )
 
                 Text(
                     text = description,
-                    color = Color.Gray
-                )
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis, // add "..." if text is longer
+                    color = Color.Gray,
 
-                Text(
-                    text = description,
-                    color = Color.Gray
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
 
             Column (modifier = Modifier.padding(top = 16.dp)) {
                 Icon(
                     imageVector = Icons.Outlined.KeyboardArrowRight,
                     modifier = Modifier.size(40.dp),
-                    tint = Color.Black.copy(alpha = 0.7f),
+                    tint = Color.Black.copy(0.5f),
                     contentDescription = "Right arrow"
                 )
             }
@@ -83,5 +84,5 @@ fun NoteCard(title:String, description : String){
         }
     }
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(20.dp))
 }

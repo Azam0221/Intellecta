@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -23,6 +24,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,12 +39,22 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.intellecta.navigation.Screens
 import com.example.intellecta.ui.components.NoteCard
+import com.example.intellecta.viewmodel.NoteViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteListScreen(){
+fun NoteListScreen(navCtrl:NavHostController){
+
+    val viewModel: NoteViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadAllNotes()
+    }
     Scaffold(
     ) { innerPadding ->
         Column(
@@ -59,7 +73,7 @@ fun NoteListScreen(){
             ) {
 
                 Text(
-                    text = "AllNotes",
+                    text = "All Notes",
                     textAlign = TextAlign.Center,
                     fontSize = 22.sp,
                     textDecoration = TextDecoration.None,
@@ -92,12 +106,18 @@ fun NoteListScreen(){
             )
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-            LazyColumn(modifier = Modifier.padding(top = 16.dp)){
-                items(4){ item ->
-                    NoteCard("Project kickoff","Meeting notes from the project")
+            LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
+                items(uiState.notes) { note ->
+                    NoteCard(
+                        title = note.title,
+                        description = note.content,
+                        onClick = {
+                            navCtrl.navigate("edit_note/${note.id}")
+                        }
+                        )
                 }
-            }
 
+            }
         }
     }
 }

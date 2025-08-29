@@ -66,7 +66,28 @@ class NoteViewModel(
         }
     }
 
-    fun loadAllNote(noteId : Int) {
+    fun loadAllNotes(){
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try{
+                val notes = noteRepository.getAllNotes()
+                _uiState.value = _uiState.value.copy(
+                    notes = notes,
+                    isLoading = false,
+                    error = null
+                )
+                Log.d("noteLoad", "all notes loaded $notes")
+            }
+            catch (e:Exception){
+                _uiState.value = _uiState.value.copy(
+                    error = e.message,
+                    isLoading = false
+                )
+            }
+        }
+    }
+
+    fun loadNote(noteId : Int) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
@@ -83,6 +104,8 @@ class NoteViewModel(
 
         }
     }
+
+
 
     fun updateNote(note: Note){
         viewModelScope.launch {
@@ -107,6 +130,7 @@ class NoteViewModel(
 
 data class NoteUiState(
     val note: Note = Note(),
+    val notes: List<Note> = emptyList(),
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val error: String? = null

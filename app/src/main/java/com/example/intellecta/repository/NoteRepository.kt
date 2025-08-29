@@ -9,6 +9,10 @@ class NoteRepository (
     private val fileDao: FileDao
 ) {
     suspend fun insertNote(note: Note) = noteDao.insertNote(note)
+
     suspend fun getNote(id: Int) = noteDao.getNote(id)
+
     suspend fun updateNote(note: Note) = noteDao.updateNote(note)
-}
+
+    suspend fun getAllNotes() = noteDao.getAllNotes()
+} 
