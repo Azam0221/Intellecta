@@ -35,18 +35,20 @@ fun Navigation(){
                 slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
             },
             popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) + fadeIn() },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }){
-            AddNoteScreen()
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }
+        ){
+            AddNoteScreen(navCtrl)
         }
         composable(Screens.NotesListScreen.route,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+                slideInHorizontally(initialOffsetX = { 1 }) + fadeIn()
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut()
             },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) + fadeIn() },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }){
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { 1}) + fadeIn() },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut() }
+        ){
             NoteListScreen(navCtrl)
         }
 
@@ -62,7 +64,7 @@ fun Navigation(){
             popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }){
                 backStackEntry ->
             val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
-            EditNoteScreen()
+            EditNoteScreen(noteId,navCtrl)
         }
     }
 }

@@ -3,6 +3,8 @@ package com.example.intellecta.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,10 +20,12 @@ import androidx.compose.material.icons.sharp.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,14 +35,21 @@ import com.example.aibrain.ui.theme.surfaceContainerLight
 import com.example.intellecta.R
 
 @Composable
-fun NoteCard(title:String, description : String,onClick: () -> Unit){
+fun NoteCard(title:String, description : String,onClick: () -> Unit,onLongPress:() -> Unit){
+
     Column {
         Row(modifier = Modifier.fillMaxWidth()
-            .clickable { onClick() }){
+            .pointerInput(Unit){
+                detectTapGestures(
+                    onTap = {onClick()},
+                    onLongPress = {onLongPress()}
+                )
+            }
+          ){
             Column (modifier = Modifier.padding(top = 2.dp)) {
                 Box(
                     modifier = Modifier
-                        .padding(top = 10.dp)
+                        .padding(top = 4.dp)
                         .size(50.dp)
                         .background(color = surfaceContainerLight, shape = RoundedCornerShape(6.dp))
                         .clip(RoundedCornerShape(8.dp)),
@@ -74,9 +85,10 @@ fun NoteCard(title:String, description : String,onClick: () -> Unit){
             Column (modifier = Modifier.padding(top = 16.dp)) {
                 Icon(
                     imageVector = Icons.Outlined.KeyboardArrowRight,
-                    modifier = Modifier.size(40.dp),
                     tint = Color.Black.copy(0.5f),
-                    contentDescription = "Right arrow"
+                    contentDescription = "Right arrow",
+                    modifier = Modifier
+                        .size(40.dp)
                 )
             }
 

@@ -14,5 +14,7 @@ class NoteRepository (
 
     suspend fun updateNote(note: Note) = noteDao.updateNote(note)
 
+    suspend fun deleteNote(noteId: Int) = noteDao.deleteNoteById(noteId)
+
     suspend fun getAllNotes() = noteDao.getAllNotes()
 } 

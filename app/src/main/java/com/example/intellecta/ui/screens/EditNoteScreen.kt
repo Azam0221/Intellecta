@@ -28,6 +28,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,16 +43,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.intellecta.R
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditNoteScreen(){
+fun EditNoteScreen(noteId : Int , navCtrl: NavHostController){
 
     val viewModel: NoteViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit){
+        viewModel.loadNote(noteId)
+    }
 
     val scrollState = rememberScrollState()
     Scaffold() { innerPadding ->
@@ -64,7 +70,7 @@ fun EditNoteScreen(){
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {navCtrl.popBackStack()}) {
                     Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
                 }
 
@@ -208,7 +214,8 @@ fun EditNoteScreen(){
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 20.dp))
                         .background(color = MaterialTheme.colorScheme.secondaryContainer)
                         .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                        .clickable { viewModel.updateNote(uiState.note) }
+                        .clickable { viewModel.updateNote(uiState.note)
+                            navCtrl.popBackStack()}
                         .alpha(1f)
                 ) {
 
