@@ -109,7 +109,15 @@ fun NoteListScreen(navCtrl:NavHostController){
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = Color(0xFFF5F6F8)
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(0.5f),
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent,
+                    errorBorderColor = Color.Transparent
                 )
             )
             Spacer(modifier = Modifier.padding(vertical = 16.dp))

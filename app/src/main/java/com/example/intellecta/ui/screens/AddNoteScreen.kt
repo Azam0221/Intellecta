@@ -104,7 +104,15 @@ fun AddNoteScreen( navCtrl : NavHostController
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = Color(0xFFF5F6F8)
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(0.5f),
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent,
+                    errorBorderColor = Color.Transparent
                 )
             )
 
@@ -123,7 +131,15 @@ fun AddNoteScreen( navCtrl : NavHostController
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = Color(0xFFF5F6F8)
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(0.5f),
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent,
+                    errorBorderColor = Color.Transparent
                 )
             )
 
@@ -141,7 +157,8 @@ fun AddNoteScreen( navCtrl : NavHostController
                         .size(50.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)))
-                { Icon(painter = painterResource(R.drawable.outline_keyboard_voice_24), contentDescription = "Voice")
+                {
+                    Icon(painter = painterResource(R.drawable.outline_keyboard_voice_24), contentDescription = "Voice")
                 }
 
                 Text("Voice")
