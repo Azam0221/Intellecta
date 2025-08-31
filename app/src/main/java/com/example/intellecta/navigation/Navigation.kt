@@ -29,13 +29,13 @@ fun Navigation(){
         }
         composable(Screens.AddNoteScreen.route,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+                slideInHorizontally(initialOffsetX = { 1 }) + fadeIn()
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut()
             },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) + fadeIn() },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { 1 }) + fadeIn() },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut() }
         ){
             AddNoteScreen(navCtrl)
         }

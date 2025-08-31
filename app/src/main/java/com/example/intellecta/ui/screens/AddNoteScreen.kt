@@ -1,6 +1,12 @@
 package com.example.intellecta.ui.screens
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.widget.Button
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Center
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,7 +61,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.intellecta.FileType
 import com.example.intellecta.R
+import com.example.intellecta.ui.components.FileCard
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -64,16 +74,42 @@ fun AddNoteScreen( navCtrl : NavHostController
     val viewModel: NoteViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
+    // File pickers
+    // 1. gallery/camera
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri : Uri? ->
+        uri?.let{viewModel.addFile(it,FileType.IMAGE)}
+    }
+
+    // 2. documents
+    val docPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        uri?.let { viewModel.addFile(it, FileType.DOCUMENT) }
+    }
+
+    // 3. Voice
+    val audioRecorderLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data
+            uri?.let { viewModel.addFile(it, FileType.AUDIO) }
+        }
+    }
+
     val scrollState = rememberScrollState()
     Scaffold() { innerPadding ->
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
-            .padding(16.dp)
+            .padding(start=16.dp,end = 16.dp)
             .verticalScroll(scrollState)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 IconButton(
                     onClick = { navCtrl.popBackStack() },
@@ -145,13 +181,28 @@ fun AddNoteScreen( navCtrl : NavHostController
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            LazyRow(){
+                items(uiState.attachedFiles){ file->
+                    FileCard(
+                        imageRes = when (file.type) {
+                            FileType.AUDIO -> R.drawable.outline_keyboard_voice_24
+                            FileType.IMAGE -> R.drawable.outline_image_24
+                            FileType.DOCUMENT -> R.drawable.outline_attach_file_24
+                        },
+                        type = file.uri.lastPathSegment ?: "File",
+                        onClick = {viewModel.removeFile(file.uri,file.type)},
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(18.dp))
+
             // Voice, Image, Attach Buttons
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(onClick = {
-
+                    audioRecorderLauncher.launch(Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION))
                 },
                     modifier = Modifier
                         .size(50.dp)
@@ -165,7 +216,9 @@ fun AddNoteScreen( navCtrl : NavHostController
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                IconButton(onClick = {},
+                IconButton(onClick = {
+                    imagePickerLauncher.launch("image/*")
+                },
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape)
@@ -177,7 +230,9 @@ fun AddNoteScreen( navCtrl : NavHostController
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                IconButton(onClick = {},
+                IconButton(onClick = {
+                    docPickerLauncher.launch(arrayOf("*/*"))
+                },
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape)
@@ -191,8 +246,8 @@ fun AddNoteScreen( navCtrl : NavHostController
 
 
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = CenterVertically,
+                horizontalArrangement = SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Enable AI Summary")
@@ -207,10 +262,10 @@ fun AddNoteScreen( navCtrl : NavHostController
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = SpaceBetween
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
                     modifier = Modifier
 
@@ -228,11 +283,11 @@ fun AddNoteScreen( navCtrl : NavHostController
                         text = "Cancel",
                         textAlign = TextAlign.Center,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = Bold,
                     )
                 }
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
                     modifier = Modifier
                         .width(80.dp)
@@ -256,7 +311,7 @@ fun AddNoteScreen( navCtrl : NavHostController
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = Bold,
                     )
 
                 }

@@ -1,10 +1,12 @@
 package com.example.intellecta.viewmodel
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.intellecta.FileType
 import com.example.intellecta.model.Note
 import com.example.intellecta.dao.FileDao
 import com.example.intellecta.dao.NoteDao
@@ -145,12 +147,30 @@ class NoteViewModel(
             timeStamp = System.currentTimeMillis()
         )
     }
+
+    fun addFile(uri: Uri,type: FileType){
+        _uiState.update { state ->
+            state.copy(attachedFiles = state.attachedFiles + AttachedFile(uri,type))
+        }
+    }
+
+    fun removeFile(uri: Uri,type: FileType){
+        _uiState.update { state ->
+            state.copy(attachedFiles = state.attachedFiles.filterNot { it.uri == uri })
+        }
+    }
 }
 
 data class NoteUiState(
     val note: Note = Note(),
     val notes: List<Note> = emptyList(),
+    val attachedFiles: List<AttachedFile> = emptyList(),
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val error: String? = null
+)
+
+data class AttachedFile(
+    val uri : Uri,
+    val type : FileType
 )
