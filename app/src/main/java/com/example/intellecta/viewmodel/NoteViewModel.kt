@@ -11,6 +11,7 @@ import com.example.intellecta.model.Note
 import com.example.intellecta.dao.FileDao
 import com.example.intellecta.dao.NoteDao
 import com.example.intellecta.repository.NoteRepository
+import com.example.intellecta.ui.components.AttachedFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,8 +70,11 @@ class NoteViewModel(
                         .show()
                     return@launch
                 }
-                noteRepository.insertNote(note)
-                _uiState.value = _uiState.value.copy(isSaved = true, error = null , isLoading = false )
+                noteRepository.insertNoteWithFiles(note, _uiState.value.attachedFiles)
+                _uiState.value = _uiState.value.copy(
+                    isSaved = true, error = null , isLoading = false,
+                    attachedFiles = emptyList()
+                )
                 Log.d("note" ,"notes added $note")
             }
             catch (e : Exception){
@@ -168,9 +172,4 @@ data class NoteUiState(
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val error: String? = null
-)
-
-data class AttachedFile(
-    val uri : Uri,
-    val type : FileType
 )
