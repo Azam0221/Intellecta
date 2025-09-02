@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,30 +37,22 @@ fun FileCard(
     type : String,
     onClick : () -> Unit
 ){
-    Column(modifier = Modifier
-        .background(color =MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-            shape = RoundedCornerShape(12.dp)),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-        ){
+
+
         Row(
             modifier = Modifier
-                .width(200.dp)
-                .height(60.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.padding(horizontal = 4.dp))
 
             Box(modifier = Modifier
                 .padding()
                 .size(40.dp)
                 .clip(RoundedCornerShape(6.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(0.8f),),
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(0.4f),),
                 contentAlignment = Alignment.Center )
             {
-                Icon(painter =  painterResource(R.drawable.outline_sticky_note_2_24),
+                Icon(painter =  painterResource(imageRes),
                     contentDescription = "Voice",
                     modifier = Modifier
                         .size(30.dp),
@@ -69,13 +62,15 @@ fun FileCard(
             }
 
 
-            Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+            Spacer(modifier = Modifier.padding(horizontal = 12.dp))
 
             Text(
                 text = type,
                 modifier = Modifier.padding(top = 2.dp)
             )
+
             Spacer(modifier = Modifier.weight(1f))
+
             Icon(
                 imageVector = Icons.Outlined.Clear,
                 contentDescription = "clear",
@@ -85,7 +80,5 @@ fun FileCard(
             )
         }
 
-
-    }
-    Spacer(modifier = Modifier.padding(horizontal = 12.dp))
+    Spacer(modifier = Modifier.padding(vertical = 8.dp))
 }

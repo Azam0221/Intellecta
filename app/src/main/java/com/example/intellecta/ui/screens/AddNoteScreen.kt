@@ -14,6 +14,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Center
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +35,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,7 +49,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -63,6 +68,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.intellecta.FileType
 import com.example.intellecta.R
+import com.example.intellecta.model.AttachmentsOption
+import com.example.intellecta.ui.components.AttachmentsOptionBox
 import com.example.intellecta.ui.components.FileCard
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -73,6 +80,8 @@ fun AddNoteScreen( navCtrl : NavHostController
 ) {
     val viewModel: NoteViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
+
+    var showOptions by remember { mutableStateOf(false) }
 
     // File pickers
     // 1. gallery/camera
@@ -100,16 +109,18 @@ fun AddNoteScreen( navCtrl : NavHostController
         }
     }
 
-    val scrollState = rememberScrollState()
-    Scaffold() { innerPadding ->
+   // val scrollState = rememberScrollState()
+    Scaffold(
+
+    ) { innerPadding ->
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
             .padding(start=16.dp,end = 16.dp)
-            .verticalScroll(scrollState)) {
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     onClick = { navCtrl.popBackStack() },
@@ -119,9 +130,56 @@ fun AddNoteScreen( navCtrl : NavHostController
                         )
                 }
 
-                Spacer(modifier = Modifier.padding(horizontal = 50.dp))
+                Spacer(modifier = Modifier.padding(horizontal = 40.dp))
 
                 Text(text = "Add Note", fontWeight = Bold, style = MaterialTheme.typography.titleLarge)
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Box {
+                    IconButton(
+                        onClick = { showOptions = true },
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.outline_attachment_24),
+                            contentDescription = "attachments",
+                            modifier = Modifier.size(30.dp),
+
+                        )
+                    }
+
+                    AttachmentsOptionBox(
+                        showOption = showOptions,
+                        onDismiss = { showOptions = false },
+                        options = listOf(
+                            AttachmentsOption("Voice", R.drawable.outline_keyboard_voice_24) {
+                                audioRecorderLauncher.launch(Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION))
+                            },
+                            AttachmentsOption("Gallery", R.drawable.outline_image_24) {
+                                imagePickerLauncher.launch("image/*")
+                            },
+                            AttachmentsOption("Files", R.drawable.outline_attach_file_24) {
+                                docPickerLauncher.launch(arrayOf("*/*"))
+                            }
+                        )
+                    )
+                }
+
+
+                IconButton(
+                    onClick = {   viewModel.saveNote()
+                        if (uiState.isSaved) {
+                            navCtrl.popBackStack()
+                        }
+                     },
+                    interactionSource = remember { MutableInteractionSource() },
+                ){
+                    Icon(imageVector = Icons.Outlined.Check, contentDescription = "Close",
+                        modifier = Modifier.size(30.dp),
+                    )
+                }
+
 
             }
 
@@ -178,72 +236,7 @@ fun AddNoteScreen( navCtrl : NavHostController
                     errorBorderColor = Color.Transparent
                 )
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            LazyRow(){
-                items(uiState.attachedFiles){ file->
-                    FileCard(
-                        imageRes = when (file.type) {
-                            FileType.AUDIO -> R.drawable.outline_keyboard_voice_24
-                            FileType.IMAGE -> R.drawable.outline_image_24
-                            FileType.DOCUMENT -> R.drawable.outline_attach_file_24
-                        },
-                        type = file.uri.lastPathSegment ?: "File",
-                        onClick = {viewModel.removeFile(file.uri,file.type)},
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(18.dp))
-
-            // Voice, Image, Attach Buttons
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(onClick = {
-                    audioRecorderLauncher.launch(Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION))
-                },
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)))
-                {
-                    Icon(painter = painterResource(R.drawable.outline_keyboard_voice_24), contentDescription = "Voice")
-                }
-
-                Text("Voice")
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                IconButton(onClick = {
-                    imagePickerLauncher.launch("image/*")
-                },
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                    ) {
-                    Icon(painter = painterResource(R.drawable.outline_image_24), contentDescription = "Image")
-                }
-                Text("Image")
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                IconButton(onClick = {
-                    docPickerLauncher.launch(arrayOf("*/*"))
-                },
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))) {
-                    Icon(painter = painterResource(R.drawable.outline_attach_file_24), contentDescription = "Attach")
-                }
-                Text("Attach")
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
                 verticalAlignment = CenterVertically,
@@ -257,68 +250,28 @@ fun AddNoteScreen( navCtrl : NavHostController
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
+            Text(text = "Attachments",
+                fontWeight = Bold,
+                fontSize = 18.sp)
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
-                    modifier = Modifier
+            Spacer(modifier = Modifier.height(10.dp))
 
-                        .width(90.dp)
-                        .height(40.dp)
-                        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 20.dp))
-                        .background(color = MaterialTheme.colorScheme.secondaryContainer.copy(0.3f))
-
-                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-
-                        .alpha(1f)
-                ) {
-
-                    Text(
-                        text = "Cancel",
-                        textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        fontWeight = Bold,
+            LazyColumn(){
+                items(uiState.attachedFiles){ file->
+                    FileCard(
+                        imageRes = when (file.type) {
+                            FileType.AUDIO -> R.drawable.outline_keyboard_voice_24
+                            FileType.IMAGE -> R.drawable.outline_image_24
+                            FileType.DOCUMENT -> R.drawable.outline_sticky_note_2_24
+                        },
+                        type = file.uri.lastPathSegment ?: "File",
+                        onClick = {viewModel.removeFile(file.uri,file.type)},
                     )
                 }
-                Row(
-                    verticalAlignment = CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(40.dp)
-                        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 20.dp))
-                        .background(color = MaterialTheme.colorScheme.secondaryContainer)
-                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                        .clickable {
-                            viewModel.saveNote()
-                            if (uiState.isSaved) {
-                                navCtrl.popBackStack()
-                            }
-                        }
-                        .alpha(1f)
-                ) {
-
-
-                    Text(
-                        text = "Save",
-                        textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier,
-                        fontWeight = Bold,
-                    )
-
-                }
-
-
-
             }
+
 
         }
     }
