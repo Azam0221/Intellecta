@@ -15,7 +15,7 @@ class NoteRepository (
     suspend fun insertNoteWithFiles(note: Note,files:List<AttachedFile>){
         val noteId = noteDao.insertNote(note)
         files.forEach { attachedFile ->
-
+            val fileName = attachedFile.uri.lastPathSegment ?: "file_${System.currentTimeMillis()}"
             val fileMeta = FileMeta(
                 noteId = noteId.toInt(),
                 fileName = attachedFile.uri.lastPathSegment ?: "Unnamed",
