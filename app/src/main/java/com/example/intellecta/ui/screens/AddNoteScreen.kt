@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -32,6 +33,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.filled.Person
@@ -47,6 +49,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -80,6 +84,7 @@ fun AddNoteScreen( navCtrl : NavHostController
 ) {
     val viewModel: NoteViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     var showOptions by remember { mutableStateOf(false) }
 
@@ -109,6 +114,13 @@ fun AddNoteScreen( navCtrl : NavHostController
         }
     }
 
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            viewModel.clearError() // <-- reset error so it won’t show again
+        }
+    }
+
    // val scrollState = rememberScrollState()
     Scaffold(
 
@@ -126,13 +138,13 @@ fun AddNoteScreen( navCtrl : NavHostController
                     onClick = { navCtrl.popBackStack() },
                     interactionSource = remember { MutableInteractionSource() },
                 ){
-                    Icon(imageVector = Icons.Default.Close, contentDescription = "Close",
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Close",
                         )
                 }
 
                 Spacer(modifier = Modifier.padding(horizontal = 40.dp))
 
-                Text(text = "Add Note", fontWeight = Bold, style = MaterialTheme.typography.titleLarge)
+                Text(text = "New Note", fontWeight = Bold, style = MaterialTheme.typography.titleLarge)
 
                 Spacer(modifier = Modifier.weight(1f))
 

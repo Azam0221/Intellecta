@@ -76,7 +76,7 @@ fun EditNoteScreen(noteId : Int , navCtrl: NavHostController){
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit){
-        viewModel.loadNote(noteId)
+        viewModel.loadNoteForEdit(noteId)
     }
 
     var showOptions by remember { mutableStateOf(false) }
@@ -166,7 +166,7 @@ fun EditNoteScreen(noteId : Int , navCtrl: NavHostController){
 
 
                 IconButton(
-                    onClick = {   viewModel.updateNote(uiState.note)
+                    onClick = {   viewModel.updateNote(uiState.note,uiState.attachedFiles)
                         if (uiState.isSaved) {
                             navCtrl.popBackStack()
                         }
