@@ -3,6 +3,7 @@ package com.example.intellecta.di
 import android.app.Application
 import androidx.room.Room
 import com.example.intellecta.dao.IntellectaDatabase
+import com.example.intellecta.repository.FileStorageRepository
 import com.example.intellecta.repository.NoteRepository
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.core.module.dsl.viewModel
@@ -27,9 +28,10 @@ val appModule = module {
 
     //Repository
 
-    single { NoteRepository(get(),get()) }
+    single { NoteRepository(get(),get(),get()) }
+    single { FileStorageRepository(get()) }
 
     //Viewmodel
 
-    viewModel{ NoteViewModel(get(),get()) }
+    viewModel{ NoteViewModel(get()) }
 }

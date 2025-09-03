@@ -1,4 +1,4 @@
-package com.example.intellecta.ui.components
+package com.example.intellecta.model
 
 import android.net.Uri
 import com.example.intellecta.FileType

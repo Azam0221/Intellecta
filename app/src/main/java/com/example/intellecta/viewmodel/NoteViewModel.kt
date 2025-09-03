@@ -1,28 +1,22 @@
 package com.example.intellecta.viewmodel
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.intellecta.FileType
 import com.example.intellecta.model.Note
-import com.example.intellecta.dao.FileDao
-import com.example.intellecta.dao.NoteDao
 import com.example.intellecta.repository.NoteRepository
-import com.example.intellecta.ui.components.AttachedFile
-import kotlinx.coroutines.Dispatchers
+import com.example.intellecta.model.AttachedFile
+import com.example.intellecta.model.FileMeta
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class NoteViewModel(
     private val noteRepository: NoteRepository,
-    private val context: Context
  ) : ViewModel() {
     private val _uiState = MutableStateFlow(NoteUiState())
     val uiState: StateFlow<NoteUiState> = _uiState
@@ -66,8 +60,7 @@ class NoteViewModel(
             try {
                 val note = buildNote()
                 if (note.title.isBlank() || note.content.isBlank()) {
-                    Toast.makeText(context, "Title or Content cannot be empty", Toast.LENGTH_SHORT)
-                        .show()
+                    _uiState.update { it.copy(error = "Title or Content cannot be empty") }
                     return@launch
                 }
                 noteRepository.insertNoteWithFiles(note, _uiState.value.attachedFiles)
@@ -104,17 +97,42 @@ class NoteViewModel(
         }
     }
 
-    fun loadNote(noteId : Int) {
+    fun loadNoteWithFiles(noteId : Int) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val note = noteRepository.getNote(noteId)
+                val noteWithFiles  = noteRepository.getNoteWithFiles(noteId)
                 _uiState.value = _uiState.value.copy(
-                    note = note,
+                    note = noteWithFiles.note,
+                    fetchedFiles = noteWithFiles.files,
                     isLoading = false,
                     error = null
                 )
-                Log.d("noteLoad", "note loaded $note")
+                Log.d("noteLoadWithFiles", "note loaded $noteWithFiles")
+            } catch (e: Exception){
+                _uiState.value = _uiState.value.copy(error = e.message)
+            }
+
+        }
+    }
+
+    fun loadNoteForEdit(noteId : Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try {
+                val noteWithFiles  = noteRepository.getNoteWithFiles(noteId)
+                _uiState.value = _uiState.value.copy(
+                    note = noteWithFiles.note,
+                    attachedFiles = noteWithFiles.files.map { file->
+                        AttachedFile(
+                            uri = Uri.parse(file.fileData),
+                            type = FileType.valueOf(file.fileType)
+                        )
+                    },
+                    isLoading = false,
+                    error = null
+                )
+                Log.d("noteLoadForEdit", "note loaded $noteWithFiles")
             } catch (e: Exception){
                 _uiState.value = _uiState.value.copy(error = e.message)
             }
@@ -123,11 +141,10 @@ class NoteViewModel(
     }
 
 
-
-    fun updateNote(note: Note){
+    fun updateNote(note: Note,newFiles:List<AttachedFile>){
         viewModelScope.launch {
-            val note = buildNote()
-            noteRepository.updateNote(note)
+            noteRepository.updateNoteWithFiles(note,newFiles)
+            loadNoteWithFiles(note.id)
             Log.d("note" ,"notes updated $note")
         }
     }
@@ -163,12 +180,17 @@ class NoteViewModel(
             state.copy(attachedFiles = state.attachedFiles.filterNot { it.uri == uri })
         }
     }
+
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
+    }
 }
 
 data class NoteUiState(
     val note: Note = Note(),
     val notes: List<Note> = emptyList(),
     val attachedFiles: List<AttachedFile> = emptyList(),
+    val fetchedFiles: List<FileMeta> = emptyList(),
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val error: String? = null
