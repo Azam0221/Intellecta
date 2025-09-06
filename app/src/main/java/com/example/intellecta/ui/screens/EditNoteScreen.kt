@@ -63,6 +63,7 @@ import androidx.navigation.NavHostController
 import com.example.intellecta.FileType
 import com.example.intellecta.R
 import com.example.intellecta.model.AttachmentsOption
+import com.example.intellecta.ui.components.AttachmentCard
 import com.example.intellecta.ui.components.AttachmentsOptionBox
 import com.example.intellecta.ui.components.FileCard
 import com.example.intellecta.viewmodel.NoteViewModel
@@ -250,9 +251,14 @@ fun EditNoteScreen(noteId : Int , navCtrl: NavHostController){
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Attachments",
-                fontWeight = Bold,
-                fontSize = 18.sp)
+            Row(modifier = Modifier.fillMaxWidth()){
+
+                AttachmentCard(R.drawable.outline_sticky_note_2_24,"file")
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                AttachmentCard(R.drawable.outline_image_24,"image")
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                AttachmentCard(R.drawable.outline_keyboard_voice_24,"voice")
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 

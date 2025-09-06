@@ -1,5 +1,6 @@
 package com.example.intellecta.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.intellecta.navigation.Screens
 import com.example.intellecta.ui.components.NoteCard
+import com.example.intellecta.ui.components.NoteCardVer_2
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,13 +62,15 @@ fun NoteListScreen(navCtrl:NavHostController){
     var showDialog by remember {mutableStateOf(false)}
     var noteToDelete by remember { mutableStateOf<Int?>(null) }
 
+    var search  by remember { mutableStateOf("") }
+
     LaunchedEffect(Unit) {
         viewModel.loadAllNotes()
     }
-    Scaffold(
-    ) { innerPadding ->
+
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
+            modifier = Modifier.fillMaxSize().padding()
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(0.7f))
                 .padding(start = 12.dp, end = 12.dp),
         ) {
             Row(
@@ -76,7 +80,7 @@ fun NoteListScreen(navCtrl:NavHostController){
 
                     .fillMaxWidth()
                     .height(72.dp)
-                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                    .padding(start = 16.dp, top = 40.dp, end = 16.dp, bottom = 8.dp)
                     .alpha(1f)
             ) {
 
@@ -101,15 +105,17 @@ fun NoteListScreen(navCtrl:NavHostController){
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = search,
+                onValueChange = {newText ->
+                    search = newText
+                },
                 placeholder = { Text("Search") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(0.5f),
+                    containerColor = MaterialTheme.colorScheme.surface,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
@@ -120,13 +126,15 @@ fun NoteListScreen(navCtrl:NavHostController){
                     errorBorderColor = Color.Transparent
                 )
             )
-            Spacer(modifier = Modifier.padding(vertical = 16.dp))
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
                 items(uiState.notes) { note ->
-                    NoteCard(
+                    NoteCardVer_2(
                         title = note.title,
                         description = note.content,
+                        time = note.timeStamp,
+                        attachmentCount = 2,
                         onClick = {
                             navCtrl.navigate(Screens.EditNoteScreen.createRoute(note.id))
                         },
@@ -140,7 +148,7 @@ fun NoteListScreen(navCtrl:NavHostController){
             }
 
         }
-    }
+
     if(showDialog &&  noteToDelete!=null){
         AlertDialog(
             onDismissRequest = { showDialog = false},

@@ -73,6 +73,7 @@ import androidx.navigation.NavHostController
 import com.example.intellecta.FileType
 import com.example.intellecta.R
 import com.example.intellecta.model.AttachmentsOption
+import com.example.intellecta.ui.components.AttachmentCard
 import com.example.intellecta.ui.components.AttachmentsOptionBox
 import com.example.intellecta.ui.components.FileCard
 import com.example.intellecta.viewmodel.NoteViewModel
@@ -122,17 +123,16 @@ fun AddNoteScreen( navCtrl : NavHostController
     }
 
    // val scrollState = rememberScrollState()
-    Scaffold(
 
-    ) { innerPadding ->
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(0.7f))
             .padding(start=16.dp,end = 16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
+                verticalAlignment = Alignment.CenterVertically,
+
             ) {
                 IconButton(
                     onClick = { navCtrl.popBackStack() },
@@ -210,7 +210,7 @@ fun AddNoteScreen( navCtrl : NavHostController
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(0.5f),
+                    containerColor = MaterialTheme.colorScheme.surface,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
@@ -237,7 +237,7 @@ fun AddNoteScreen( navCtrl : NavHostController
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(0.5f),
+                    containerColor = MaterialTheme.colorScheme.surface,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
@@ -264,9 +264,14 @@ fun AddNoteScreen( navCtrl : NavHostController
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Attachments",
-                fontWeight = Bold,
-                fontSize = 18.sp)
+           Row(modifier = Modifier.fillMaxWidth()){
+
+               AttachmentCard(R.drawable.outline_sticky_note_2_24,"file")
+               Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+               AttachmentCard(R.drawable.outline_image_24,"image")
+               Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+               AttachmentCard(R.drawable.outline_keyboard_voice_24,"voice")
+           }
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -285,6 +290,6 @@ fun AddNoteScreen( navCtrl : NavHostController
             }
 
 
-        }
+
     }
 }

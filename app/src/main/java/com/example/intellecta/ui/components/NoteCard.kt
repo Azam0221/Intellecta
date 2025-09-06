@@ -48,7 +48,7 @@ fun NoteCard(title:String, description : String,onClick: () -> Unit,onLongPress:
                     onTap = {onClick()},
                     onLongPress = {onLongPress()}
                 )
-            }
+            },
           ){
             Column (modifier = Modifier.padding(top = 8.dp)) {
 

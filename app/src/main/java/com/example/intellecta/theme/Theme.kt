@@ -3,6 +3,7 @@ package com.example.aibrain.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -237,3 +238,20 @@ fun IntellectaTheme(
         content = content
     )
 }
+
+
+
+// Light theme
+val attachmentCardBackgroundLight = Color(0xFFD6E4FF) // light blue
+val attachmentCardContentLight = Color(0xFF1A3A80) // dark blue text/icon
+
+// Dark theme
+val attachmentCardBackgroundDark = Color(0xFF1E2A3B) // dark blue
+val attachmentCardContentDark = Color(0xFFAFCBFF) // light blue text/icon
+
+// Add as extension to ColorScheme
+val ColorScheme.attachmentCardBackground: Color
+    @Composable get() = if (isSystemInDarkTheme()) attachmentCardBackgroundDark else attachmentCardBackgroundLight
+
+val ColorScheme.attachmentCardContent: Color
+    @Composable get() = if (isSystemInDarkTheme()) attachmentCardContentDark else attachmentCardContentLight
