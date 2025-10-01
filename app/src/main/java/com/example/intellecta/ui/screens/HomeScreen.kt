@@ -2,6 +2,7 @@ package com.example.intellecta.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -169,6 +170,7 @@ fun HomeScreen(navCtrl :NavHostController) {
 
                     .fillMaxWidth()
                     .height(64.dp)
+                    .clickable { navCtrl.navigate(Screens.ChatBot.route) }
             ) {
 
                 Row(
@@ -195,7 +197,7 @@ fun HomeScreen(navCtrl :NavHostController) {
 
 
                     Text(
-                        text = "Quick Note",
+                        text = "Chat Bot",
                         textAlign = TextAlign.Center,
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,

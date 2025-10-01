@@ -2,6 +2,7 @@ package com.example.intellecta.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.intellecta.chatBot.ChatViewModel
 import com.example.intellecta.dao.IntellectaDatabase
 import com.example.intellecta.repository.FileStorageRepository
 import com.example.intellecta.repository.NoteRepository
@@ -34,4 +35,5 @@ val appModule = module {
     //Viewmodel
 
     viewModel{ NoteViewModel(get()) }
+    viewModel{ ChatViewModel(get()) }
 }

@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.intellecta.chatBot.ChatPage
 import com.example.intellecta.ui.screens.AddNoteScreen
 import com.example.intellecta.ui.screens.EditNoteScreen
 import com.example.intellecta.ui.screens.HomeScreen
@@ -65,6 +66,10 @@ fun Navigation(){
                 backStackEntry ->
             val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
             EditNoteScreen(noteId,navCtrl)
+        }
+
+        composable(Screens.ChatBot.route){
+            ChatPage()
         }
     }
 }

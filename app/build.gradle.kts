@@ -79,6 +79,9 @@ dependencies {
 // Encryption for local storage
     implementation("androidx.security:security-crypto:1.1.0-alpha04")
 
+//Gemini
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
  
 
 
