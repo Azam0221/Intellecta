@@ -1,5 +1,6 @@
 package com.example.intellecta.navigation
 
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -19,6 +20,7 @@ import com.example.intellecta.ui.screens.NoteListScreen
 @Composable
 fun Navigation(){
     val navCtrl = rememberNavController()
+    val animationDuration = 300
 
     NavHost(
         navController = navCtrl,
@@ -30,39 +32,88 @@ fun Navigation(){
         }
         composable(Screens.AddNoteScreen.route,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1 }) + fadeIn()
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeIn(animationSpec = tween(durationMillis = animationDuration))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut()
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeOut(animationSpec = tween(durationMillis = animationDuration))
             },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { 1 }) + fadeIn() },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut() }
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeIn(animationSpec = tween(durationMillis = animationDuration))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeOut(animationSpec = tween(durationMillis = animationDuration))
+            }
         ){
             AddNoteScreen(navCtrl)
         }
         composable(Screens.NotesListScreen.route,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1 }) + fadeIn()
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) //+ fadeIn(animationSpec = tween(durationMillis = animationDuration))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut()
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) //+ fadeOut(animationSpec = tween(durationMillis = animationDuration))
             },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { 1}) + fadeIn() },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1 }) + fadeOut() }
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) //+ fadeIn(animationSpec = tween(durationMillis = animationDuration))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) //+ fadeOut(animationSpec = tween(durationMillis = animationDuration))
+            }
         ){
             NoteListScreen(navCtrl)
         }
 
         composable(Screens.EditNoteScreen.route,
-            arguments = listOf(navArgument("noteId"){type = NavType.IntType}),
+            arguments = listOf(navArgument("noteId") { type = NavType.IntType }),
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeIn(animationSpec = tween(durationMillis = animationDuration))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeOut(animationSpec = tween(durationMillis = animationDuration))
             },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) + fadeIn() },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }){
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeIn(animationSpec = tween(durationMillis = animationDuration))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeOut(animationSpec = tween(durationMillis = animationDuration))
+            }
+        ){
                 backStackEntry ->
             val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
             EditNoteScreen(noteId,navCtrl)

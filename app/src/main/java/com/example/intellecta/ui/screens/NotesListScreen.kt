@@ -54,22 +54,33 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteListScreen(navCtrl:NavHostController){
+fun NoteListScreen(navCtrl:NavHostController) {
 
     val viewModel: NoteViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    var showDialog by remember {mutableStateOf(false)}
+    var showDialog by remember { mutableStateOf(false) }
     var noteToDelete by remember { mutableStateOf<Int?>(null) }
 
-    var search  by remember { mutableStateOf("") }
+    var search by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.loadAllNotes()
     }
 
+    Scaffold(
+        floatingActionButton = {
+
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "add",
+                )
+
+        }
+    ) { innerPadding ->
+
         Column(
-            modifier = Modifier.fillMaxSize().padding()
+            modifier = Modifier.fillMaxSize().padding(innerPadding)
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(0.7f))
                 .padding(start = 12.dp, end = 12.dp),
         ) {
@@ -80,7 +91,7 @@ fun NoteListScreen(navCtrl:NavHostController){
 
                     .fillMaxWidth()
                     .height(72.dp)
-                    .padding(start = 16.dp, top = 40.dp, end = 16.dp, bottom = 8.dp)
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
                     .alpha(1f)
             ) {
 
@@ -106,7 +117,7 @@ fun NoteListScreen(navCtrl:NavHostController){
 
             OutlinedTextField(
                 value = search,
-                onValueChange = {newText ->
+                onValueChange = { newText ->
                     search = newText
                 },
                 placeholder = { Text("Search") },
@@ -149,24 +160,27 @@ fun NoteListScreen(navCtrl:NavHostController){
 
         }
 
-    if(showDialog &&  noteToDelete!=null){
-        AlertDialog(
-            onDismissRequest = { showDialog = false},
-            title = {Text("Delete Note")},
-            text = {Text("Are you sure you want to delete this note?")},
-            confirmButton = {
-                TextButton(
-                    onClick = { viewModel.deleteNote(noteToDelete!!)
-                    showDialog = false}
-                ) {
-                    Text("Delete")
+        if (showDialog && noteToDelete != null) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Delete Note") },
+                text = { Text("Are you sure you want to delete this note?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.deleteNote(noteToDelete!!)
+                            showDialog = false
+                        }
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("cancel")
+                    }
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = {showDialog = false}) {
-                    Text("cancel")
-                }
-            }
-        )
+            )
+        }
     }
 }

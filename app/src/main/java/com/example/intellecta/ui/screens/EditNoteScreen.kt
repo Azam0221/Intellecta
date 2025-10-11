@@ -253,11 +253,16 @@ fun EditNoteScreen(noteId : Int , navCtrl: NavHostController){
 
             Row(modifier = Modifier.fillMaxWidth()){
 
-                AttachmentCard(R.drawable.outline_sticky_note_2_24,"file")
+                AttachmentCard(R.drawable.outline_sticky_note_2_24,"file"){
+                    docPickerLauncher.launch(arrayOf("*/*"))
+                }
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-                AttachmentCard(R.drawable.outline_image_24,"image")
+                AttachmentCard(R.drawable.outline_image_24,"image",){
+                    imagePickerLauncher.launch("image/*")
+                }
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-                AttachmentCard(R.drawable.outline_keyboard_voice_24,"voice")
+                AttachmentCard(R.drawable.outline_keyboard_voice_24,"voice",)
+                {audioRecorderLauncher.launch(Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION))}
             }
 
             Spacer(modifier = Modifier.height(10.dp))

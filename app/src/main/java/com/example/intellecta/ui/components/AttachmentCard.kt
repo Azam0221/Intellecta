@@ -2,6 +2,7 @@ package com.example.intellecta.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,15 +25,17 @@ import com.example.aibrain.ui.theme.attachmentCardContent
 fun AttachmentCard(
     @DrawableRes imageRes: Int,
     docType: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .height(50.dp)
             .clip(RoundedCornerShape(16.dp))
+            .clickable { onClick() }
             .background(MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f))
             .padding(horizontal = 12.dp), // padding inside the box
-        contentAlignment = Alignment.Center // align Row content to start
+        contentAlignment = Alignment.Center, // align Row content to start
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
