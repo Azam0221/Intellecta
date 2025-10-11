@@ -9,6 +9,7 @@ import com.example.intellecta.model.Note
 import com.example.intellecta.repository.NoteRepository
 import com.example.intellecta.model.AttachedFile
 import com.example.intellecta.model.FileMeta
+import com.example.intellecta.model.NoteUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -186,12 +187,3 @@ class NoteViewModel(
     }
 }
 
-data class NoteUiState(
-    val note: Note = Note(),
-    val notes: List<Note> = emptyList(),
-    val attachedFiles: List<AttachedFile> = emptyList(),
-    val fetchedFiles: List<FileMeta> = emptyList(),
-    val isLoading: Boolean = false,
-    val isSaved: Boolean = false,
-    val error: String? = null
-)

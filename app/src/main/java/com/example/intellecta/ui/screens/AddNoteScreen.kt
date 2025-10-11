@@ -126,7 +126,7 @@ fun AddNoteScreen( navCtrl : NavHostController
 
         Column(modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(0.7f))
+            //.background(MaterialTheme.colorScheme.surfaceVariant.copy(0.7f))
             .padding(start=16.dp,end = 16.dp)
         ) {
             Row(
@@ -209,17 +209,6 @@ fun AddNoteScreen( navCtrl : NavHostController
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent,
-                    disabledBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent
-                )
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -237,15 +226,15 @@ fun AddNoteScreen( navCtrl : NavHostController
                     .clip(RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    //containerColor = MaterialTheme.colorScheme.surface,
+                    //focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                   // focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    //unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
 
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent,
-                    disabledBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent
+                    //focusedBorderColor = Color.Transparent,
+                    //unfocusedBorderColor = Color.Transparent,
+                    //disabledBorderColor = Color.Transparent,
+                    //errorBorderColor = Color.Transparent
                 )
             )
             Spacer(modifier = Modifier.height(12.dp))

@@ -69,20 +69,13 @@ fun NoteListScreen(navCtrl:NavHostController) {
     }
 
     Scaffold(
-        floatingActionButton = {
 
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "add",
-                )
-
-        }
     ) { innerPadding ->
 
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding)
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(0.7f))
-                .padding(start = 12.dp, end = 12.dp),
+                .padding(start = 12.dp, end = 12.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -113,6 +106,7 @@ fun NoteListScreen(navCtrl:NavHostController) {
                     contentDescription = "Add"
                 )
             }
+
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
             OutlinedTextField(
@@ -147,7 +141,7 @@ fun NoteListScreen(navCtrl:NavHostController) {
                         time = note.timeStamp,
                         attachmentCount = 2,
                         onClick = {
-                            navCtrl.navigate(Screens.EditNoteScreen.createRoute(note.id))
+                            navCtrl.navigate(Screens.NoteDetailsScreen.createRoute(note.id))
                         },
                         onLongPress = {
                             noteToDelete = note.id

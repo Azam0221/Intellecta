@@ -15,6 +15,7 @@ import com.example.intellecta.chatBot.ChatPage
 import com.example.intellecta.ui.screens.AddNoteScreen
 import com.example.intellecta.ui.screens.EditNoteScreen
 import com.example.intellecta.ui.screens.HomeScreen
+import com.example.intellecta.ui.screens.NoteDetailsScreen
 import com.example.intellecta.ui.screens.NoteListScreen
 
 @Composable
@@ -117,6 +118,38 @@ fun Navigation(){
                 backStackEntry ->
             val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
             EditNoteScreen(noteId,navCtrl)
+        }
+
+        composable(Screens.NoteDetailsScreen.route,
+            arguments = listOf(navArgument("noteId") { type = NavType.IntType }),
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeIn(animationSpec = tween(durationMillis = animationDuration))
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeOut(animationSpec = tween(durationMillis = animationDuration))
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeIn(animationSpec = tween(durationMillis = animationDuration))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = animationDuration)
+                ) + fadeOut(animationSpec = tween(durationMillis = animationDuration))
+            }
+        ){
+                backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
+            NoteDetailsScreen(noteId,navCtrl)
         }
 
         composable(Screens.ChatBot.route){
