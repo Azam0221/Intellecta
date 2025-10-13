@@ -38,7 +38,6 @@ fun FileCard(
     onClick : () -> Unit
 ){
 
-
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -53,7 +52,7 @@ fun FileCard(
                 contentAlignment = Alignment.Center )
             {
                 Icon(painter =  painterResource(imageRes),
-                    contentDescription = "Voice",
+                    contentDescription = type,
                     modifier = Modifier
                         .size(30.dp),
                    // tint = MaterialTheme.colorScheme.primary

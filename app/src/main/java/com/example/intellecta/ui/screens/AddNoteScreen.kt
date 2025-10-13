@@ -142,7 +142,7 @@ fun AddNoteScreen( navCtrl : NavHostController
                         )
                 }
 
-                Spacer(modifier = Modifier.padding(horizontal = 40.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 Text(text = "New Note", fontWeight = Bold, style = MaterialTheme.typography.titleLarge)
 
@@ -156,7 +156,6 @@ fun AddNoteScreen( navCtrl : NavHostController
                         Icon(
                             painter = painterResource(R.drawable.outline_attachment_24),
                             contentDescription = "attachments",
-                            modifier = Modifier.size(30.dp),
 
                         )
                     }
@@ -188,7 +187,6 @@ fun AddNoteScreen( navCtrl : NavHostController
                     interactionSource = remember { MutableInteractionSource() },
                 ){
                     Icon(imageVector = Icons.Outlined.Check, contentDescription = "Close",
-                        modifier = Modifier.size(30.dp),
                     )
                 }
 
@@ -258,11 +256,11 @@ fun AddNoteScreen( navCtrl : NavHostController
                AttachmentCard(R.drawable.outline_sticky_note_2_24,"file"){
                    docPickerLauncher.launch(arrayOf("*/*"))
                }
-               Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+               Spacer(modifier = Modifier.weight(1f))
                AttachmentCard(R.drawable.outline_image_24,"image",){
                    imagePickerLauncher.launch("image/*")
                }
-               Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+               Spacer(modifier = Modifier.weight(1f))
                AttachmentCard(R.drawable.outline_keyboard_voice_24,"voice",)
                {audioRecorderLauncher.launch(Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION))}
 

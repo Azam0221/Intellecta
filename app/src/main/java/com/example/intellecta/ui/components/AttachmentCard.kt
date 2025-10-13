@@ -33,14 +33,16 @@ fun AttachmentCard(
             .height(50.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
-            .background(MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f))
-            .padding(horizontal = 12.dp), // padding inside the box
-        contentAlignment = Alignment.Center, // align Row content to start
+            .background(MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f)),
+             contentAlignment = Alignment.Center,
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp) // spacing between icon & text
+            horizontalArrangement = Arrangement.spacedBy(8.dp), // spacing between icon & text
+            modifier = Modifier.padding(start = 6.dp , end = 4.dp)
         ) {
+
             Icon(
                 painter = painterResource(id = imageRes),
                 contentDescription = docType,
