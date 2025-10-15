@@ -70,8 +70,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.aibrain.ui.theme.attachmentCardBackground
+import com.example.aibrain.ui.theme.attachmentCardContent
 import com.example.intellecta.FileType
 import com.example.intellecta.R
+import com.example.intellecta.getFileNameFromUri
 import com.example.intellecta.model.AttachmentsOption
 import com.example.intellecta.ui.components.AttachmentCard
 import com.example.intellecta.ui.components.AttachmentsOptionBox
@@ -95,14 +98,21 @@ fun AddNoteScreen( navCtrl : NavHostController
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri : Uri? ->
-        uri?.let{viewModel.addFile(it,FileType.IMAGE)}
+
+        uri?.let{
+            val fileName = getFileNameFromUri(context, it)
+            viewModel.addFile(it, FileType.IMAGE, fileName)
+        }
     }
 
     // 2. documents
     val docPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
-        uri?.let { viewModel.addFile(it, FileType.DOCUMENT) }
+        uri?.let {
+            val fileName = getFileNameFromUri(context, it) // <-- Get the name
+            viewModel.addFile(it, FileType.DOCUMENT, fileName)
+        }
     }
 
     // 3. Voice
@@ -111,7 +121,9 @@ fun AddNoteScreen( navCtrl : NavHostController
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val uri = result.data?.data
-            uri?.let { viewModel.addFile(it, FileType.AUDIO) }
+            uri?.let {
+                val fileName = getFileNameFromUri(context, it)
+                viewModel.addFile(it, FileType.AUDIO,fileName) }
         }
     }
 
@@ -127,7 +139,7 @@ fun AddNoteScreen( navCtrl : NavHostController
         Column(modifier = Modifier
             .fillMaxSize()
             //.background(MaterialTheme.colorScheme.surfaceVariant.copy(0.7f))
-            .padding(start=16.dp,end = 16.dp)
+            .padding(start=16.dp,end = 16.dp, bottom = 16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
@@ -178,17 +190,17 @@ fun AddNoteScreen( navCtrl : NavHostController
                 }
 
 
-                IconButton(
-                    onClick = {   viewModel.saveNote()
-                        if (uiState.isSaved) {
-                            navCtrl.popBackStack()
-                        }
-                     },
-                    interactionSource = remember { MutableInteractionSource() },
-                ){
-                    Icon(imageVector = Icons.Outlined.Check, contentDescription = "Close",
-                    )
-                }
+//                IconButton(
+//                    onClick = {   viewModel.saveNote()
+//                        if (uiState.isSaved) {
+//                            navCtrl.popBackStack()
+//                        }
+//                     },
+//                    interactionSource = remember { MutableInteractionSource() },
+//                ){
+//                    Icon(imageVector = Icons.Outlined.Check, contentDescription = "Close",
+//                    )
+//                }
 
 
             }
@@ -251,21 +263,21 @@ fun AddNoteScreen( navCtrl : NavHostController
 
             Spacer(modifier = Modifier.height(16.dp))
 
-           Row(modifier = Modifier.fillMaxWidth()){
-
-               AttachmentCard(R.drawable.outline_sticky_note_2_24,"file"){
-                   docPickerLauncher.launch(arrayOf("*/*"))
-               }
-               Spacer(modifier = Modifier.weight(1f))
-               AttachmentCard(R.drawable.outline_image_24,"image",){
-                   imagePickerLauncher.launch("image/*")
-               }
-               Spacer(modifier = Modifier.weight(1f))
-               AttachmentCard(R.drawable.outline_keyboard_voice_24,"voice",)
-               {audioRecorderLauncher.launch(Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION))}
-
-
-           }
+//           Row(modifier = Modifier.fillMaxWidth()){
+//
+//               AttachmentCard(R.drawable.outline_sticky_note_2_24,"file"){
+//                   docPickerLauncher.launch(arrayOf("*/*"))
+//               }
+//               Spacer(modifier = Modifier.weight(1f))
+//               AttachmentCard(R.drawable.outline_image_24,"image",){
+//                   imagePickerLauncher.launch("image/*")
+//               }
+//               Spacer(modifier = Modifier.weight(1f))
+//               AttachmentCard(R.drawable.outline_keyboard_voice_24,"voice",)
+//               {audioRecorderLauncher.launch(Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION))}
+//
+//
+//           }
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -278,9 +290,27 @@ fun AddNoteScreen( navCtrl : NavHostController
                             FileType.DOCUMENT -> R.drawable.outline_sticky_note_2_24
                         },
                         type = file.uri.lastPathSegment ?: "File",
+                        name = file.displayName,
                         onClick = {viewModel.removeFile(file.uri,file.type)},
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+
+            Button(
+                onClick = {  viewModel.saveNote() },
+
+                modifier = Modifier
+                    .fillMaxWidth(),
+                // 5. Customize the button's colors.
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f),
+                    contentColor = MaterialTheme.colorScheme.attachmentCardContent
+                )
+            ) {
+                Text(text = "Save Note")
             }
 
 

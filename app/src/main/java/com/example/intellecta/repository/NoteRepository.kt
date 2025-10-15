@@ -16,13 +16,13 @@ class NoteRepository (
     suspend fun insertNoteWithFiles(note: Note,files:List<AttachedFile>){
         val noteId = noteDao.insertNote(note)
         files.forEach { attachedFile ->
-            val fileName = attachedFile.uri.lastPathSegment ?: "file_${System.currentTimeMillis()}"
+            val fileName = attachedFile.displayName
             val savedFile = fileStorageRepository.saveFile(attachedFile.uri,fileName)
 
             savedFile?.let {
                 val fileMeta = FileMeta(
                     noteId = noteId.toInt(),
-                    fileName = it.name,
+                    fileName = attachedFile.displayName,
                     fileType = attachedFile.type.name,
                     fileData = it.name
                 )

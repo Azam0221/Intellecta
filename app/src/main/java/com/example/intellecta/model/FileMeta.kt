@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 data class FileMeta(
     @PrimaryKey(autoGenerate = true)
     var id : Int =0,
-    var noteId : Int, 
+    var noteId : Int,
     var fileName : String, 
     var fileType : String,
     var fileData : String

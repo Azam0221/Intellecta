@@ -34,7 +34,8 @@ import com.example.intellecta.R
 @Composable
 fun FileCard(
     @DrawableRes imageRes : Int,
-    type : String,
+    type: String,
+    name: String,
     onClick : () -> Unit
 ){
 
@@ -64,7 +65,7 @@ fun FileCard(
             Spacer(modifier = Modifier.padding(horizontal = 12.dp))
 
             Text(
-                text = type,
+                text = name,
                 modifier = Modifier.padding(top = 2.dp)
             )
 

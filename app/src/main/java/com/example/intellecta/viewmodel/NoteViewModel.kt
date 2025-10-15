@@ -113,7 +113,6 @@ class NoteViewModel(
             } catch (e: Exception){
                 _uiState.value = _uiState.value.copy(error = e.message)
             }
-
         }
     }
 
@@ -127,7 +126,8 @@ class NoteViewModel(
                     attachedFiles = noteWithFiles.files.map { file->
                         AttachedFile(
                             uri = Uri.parse(file.fileData),
-                            type = FileType.valueOf(file.fileType)
+                            type = FileType.valueOf(file.fileType),
+                            displayName = file.fileName
                         )
                     },
                     isLoading = false,
@@ -170,9 +170,9 @@ class NoteViewModel(
         )
     }
 
-    fun addFile(uri: Uri,type: FileType){
+    fun addFile(uri: Uri,type: FileType,displayName:String){
         _uiState.update { state ->
-            state.copy(attachedFiles = state.attachedFiles + AttachedFile(uri,type))
+            state.copy(attachedFiles = state.attachedFiles + AttachedFile(uri,type,displayName))
         }
     }
 

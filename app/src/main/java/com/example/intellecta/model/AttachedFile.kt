@@ -5,5 +5,6 @@ import com.example.intellecta.FileType
 
 data class AttachedFile(
     val uri : Uri,
-    val type : FileType
+    val type : FileType,
+    val displayName: String
 )
