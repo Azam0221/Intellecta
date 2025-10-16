@@ -4,10 +4,12 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.intellecta.fileManaging.FileManager
 import com.example.intellecta.fileManaging.FileType
 import com.example.intellecta.model.Note
 import com.example.intellecta.repository.NoteRepository
 import com.example.intellecta.model.AttachedFile
+import com.example.intellecta.model.FileMeta
 import com.example.intellecta.model.NoteUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class NoteViewModel(
     private val noteRepository: NoteRepository,
+    private val fileManager: FileManager
  ) : ViewModel() {
     private val _uiState = MutableStateFlow(NoteUiState())
     val uiState: StateFlow<NoteUiState> = _uiState
@@ -138,6 +141,28 @@ class NoteViewModel(
             }
 
         }
+    }
+
+    fun loadFileForNote(){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                val files = noteRepository.getAllFiles()
+                _uiState.update {
+                    it.copy(
+                        fetchedFiles = files,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            }catch (e:Exception){
+                _uiState.update { it.copy(error = e.message , isLoading = false) }
+            }
+        }
+    }
+
+    fun openFile(fileMeta: FileMeta) {
+        fileManager.openFile(fileMeta)
     }
 
 

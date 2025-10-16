@@ -77,7 +77,7 @@ fun ChatPage(modifier : Modifier = Modifier) {
                                     color = Color.Black)
                             }
                         },
-                        colors = TopAppBarDefaults.topAppBarColors(Color(0xFFB8D89D))
+                       // colors = TopAppBarDefaults.topAppBarColors(Color(0xFFB8D89D))
 
 
 
@@ -87,14 +87,15 @@ fun ChatPage(modifier : Modifier = Modifier) {
 
         Column(modifier = Modifier
             .padding(innerPadding)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Black.copy(0.9f), // Start color
-                        Color(0xFFB8D89D)
-                    )
-                )
-            )) {
+//            .background(
+//                brush = Brush.verticalGradient(
+//                    colors = listOf(
+//                        Color.Black.copy(0.9f), // Start color
+//                        Color(0xFFB8D89D)
+//                    )
+//                )
+          //  )
+        ) {
             
             MessageList(modifier = Modifier.weight(1f), messageList = viewModel.messageList)
             MessageInput(onMessageSend = {

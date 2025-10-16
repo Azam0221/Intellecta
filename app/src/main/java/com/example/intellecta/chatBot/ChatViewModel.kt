@@ -45,7 +45,7 @@ class ChatViewModel(
 
 
                 messageList.add(MessageModel(question, "user"))
-                messageList.add(MessageModel("Typing....","model"))
+                messageList.add(MessageModel("Thinking....","model"))
 
                 val response = chat.sendMessage(question)
                 messageList.removeAt(messageList.lastIndex)

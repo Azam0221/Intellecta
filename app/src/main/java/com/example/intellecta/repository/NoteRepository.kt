@@ -66,6 +66,10 @@ class NoteRepository (
         return fileDao.getAllFiles()
     }
 
+    suspend fun getFilesForNote(noteId: Int) : List<FileMeta> {
+        return fileDao.getAllFiles()
+    }
+
 
     suspend fun insertNote(note: Note) = noteDao.insertNote(note)
 

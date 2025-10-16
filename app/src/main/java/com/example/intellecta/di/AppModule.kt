@@ -37,7 +37,7 @@ val appModule = module {
 
     //Viewmodel
 
-    viewModel{ NoteViewModel(get()) }
+    viewModel{ NoteViewModel(get(),get()) }
     viewModel{ ChatViewModel(get()) }
     viewModel{ FilesManagingViewModel(get(),get()) }
 

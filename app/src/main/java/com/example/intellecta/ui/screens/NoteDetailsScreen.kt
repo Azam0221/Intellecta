@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
@@ -22,6 +24,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +53,7 @@ import com.example.aibrain.ui.theme.attachmentCardBackground
 import com.example.aibrain.ui.theme.attachmentCardContent
 import com.example.intellecta.R
 import com.example.intellecta.model.AttachmentsOption
+import com.example.intellecta.model.FileListItemCard
 import com.example.intellecta.navigation.Screens
 import com.example.intellecta.ui.components.AttachmentsOptionBox
 import com.example.intellecta.viewmodel.NoteViewModel
@@ -63,6 +67,7 @@ fun NoteDetailsScreen(noteId:Int,navCtrl: NavHostController){
 
     LaunchedEffect(Unit){
         viewModel.loadNoteForEdit(noteId)
+        viewModel.loadFileForNote()
     }
 
 
@@ -121,6 +126,22 @@ fun NoteDetailsScreen(noteId:Int,navCtrl: NavHostController){
 
             Text(text = "Attachments", fontWeight = Bold, style = MaterialTheme.typography.titleLarge)
 
+
+            Spacer(modifier = Modifier.padding(vertical = 12.dp))
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ){
+                items(uiState.fetchedFiles) { file ->
+                    FileListItemCard(fileMeta = file) {
+                        viewModel.openFile(file)
+                    }
+                    Divider()
+                }
+            }
+
             Spacer(modifier = Modifier.weight(1f))
 
 
@@ -137,6 +158,11 @@ fun NoteDetailsScreen(noteId:Int,navCtrl: NavHostController){
             ) {
                 Text(text = "Summarize with AI")
             }
+
+
+
+
+
         }
 
 
