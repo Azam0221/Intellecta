@@ -225,6 +225,7 @@ fun HomeScreen(navCtrl :NavHostController) {
                                 bottomEnd = 20.dp
                             )
                         )
+                        .clickable { navCtrl.navigate(Screens.AllFilesScreen.route) }
                         .background(color = MaterialTheme.colorScheme.secondaryContainer.copy(0.3f))
 
                         .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
@@ -234,7 +235,7 @@ fun HomeScreen(navCtrl :NavHostController) {
 
 
                     Text(
-                        text = "New Summary",
+                        text = "All Files List",
                         textAlign = TextAlign.Center,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,

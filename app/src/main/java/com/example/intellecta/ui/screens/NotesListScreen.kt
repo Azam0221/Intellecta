@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.intellecta.navigation.Screens
-import com.example.intellecta.ui.components.NoteCard
 import com.example.intellecta.ui.components.NoteCardVer_2
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.androidx.compose.koinViewModel

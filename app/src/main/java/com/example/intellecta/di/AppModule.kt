@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.room.Room
 import com.example.intellecta.chatBot.ChatViewModel
 import com.example.intellecta.dao.IntellectaDatabase
+import com.example.intellecta.fileManaging.FileManager
 import com.example.intellecta.repository.FileStorageRepository
 import com.example.intellecta.repository.NoteRepository
+import com.example.intellecta.viewmodel.FilesManagingViewModel
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -31,9 +33,12 @@ val appModule = module {
 
     single { NoteRepository(get(),get(),get()) }
     single { FileStorageRepository(get()) }
+    single { FileManager(get()) }
 
     //Viewmodel
 
     viewModel{ NoteViewModel(get()) }
     viewModel{ ChatViewModel(get()) }
+    viewModel{ FilesManagingViewModel(get(),get()) }
+
 }

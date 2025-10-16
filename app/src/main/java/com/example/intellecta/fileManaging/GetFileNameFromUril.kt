@@ -1,4 +1,4 @@
-package com.example.intellecta
+package com.example.intellecta.fileManaging
 
 import android.content.Context
 import android.net.Uri

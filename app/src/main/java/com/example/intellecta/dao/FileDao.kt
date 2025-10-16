@@ -21,6 +21,9 @@ interface FileDao {
     @Query("SELECT * FROM files WHERE noteId = :noteId")
      suspend fun getFilesForNote(noteId : Int) : List<FileMeta>
 
+    @Query("SELECT * FROM files ORDER BY id DESC")
+    suspend fun getAllFiles(): List<FileMeta>
+
     @Update
     suspend fun updateFile(file: FileMeta)
 

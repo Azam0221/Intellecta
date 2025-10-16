@@ -1,4 +1,4 @@
-package com.example.intellecta
+package com.example.intellecta.fileManaging
 
 enum class FileType {
   AUDIO, IMAGE, DOCUMENT

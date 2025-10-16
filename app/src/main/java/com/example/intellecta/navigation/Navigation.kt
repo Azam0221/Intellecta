@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.intellecta.chatBot.ChatPage
 import com.example.intellecta.ui.screens.AddNoteScreen
+import com.example.intellecta.ui.screens.AllFilesScreen
 import com.example.intellecta.ui.screens.EditNoteScreen
 import com.example.intellecta.ui.screens.HomeScreen
 import com.example.intellecta.ui.screens.NoteDetailsScreen
@@ -154,6 +155,10 @@ fun Navigation(){
 
         composable(Screens.ChatBot.route){
             ChatPage()
+        }
+
+        composable(Screens.AllFilesScreen.route){
+            AllFilesScreen(navCtrl)
         }
     }
 }

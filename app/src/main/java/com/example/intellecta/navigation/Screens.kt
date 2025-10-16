@@ -12,4 +12,5 @@ sealed class Screens(val route: String ) {
     data object NoteDetailsScreen: Screens("note_details_screen/{noteId}"){
         fun createRoute(noteId: Int) = "note_details_screen/$noteId"
     }
+    data object AllFilesScreen   : Screens("all_files")
 }

@@ -4,11 +4,10 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.intellecta.FileType
+import com.example.intellecta.fileManaging.FileType
 import com.example.intellecta.model.Note
 import com.example.intellecta.repository.NoteRepository
 import com.example.intellecta.model.AttachedFile
-import com.example.intellecta.model.FileMeta
 import com.example.intellecta.model.NoteUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -170,7 +169,7 @@ class NoteViewModel(
         )
     }
 
-    fun addFile(uri: Uri,type: FileType,displayName:String){
+    fun addFile(uri: Uri, type: FileType, displayName:String){
         _uiState.update { state ->
             state.copy(attachedFiles = state.attachedFiles + AttachedFile(uri,type,displayName))
         }
