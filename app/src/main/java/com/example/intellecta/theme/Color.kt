@@ -1,18 +1,18 @@
-package com.example.aibrain.ui.theme
+package com.example.intellecta.theme
 
 import androidx.compose.ui.graphics.Color
 
 
 
-val primaryLight = Color(0xFF636116)
-val onPrimaryLight = Color(0xFFFFFFFF)
+val primaryLight = Color(0xFFF8FAFC)
+val onPrimaryLight = Color(0xFF3B82F6)
 val primaryContainerLight = Color(0xFFEBE68E)
 val onPrimaryContainerLight = Color(0xFF4B4900)
-val secondaryLight = Color(0xFF246488)
+val secondaryLight = Color(0xFFE2E8F0)
 val onSecondaryLight = Color(0xFFFFFFFF)
 val secondaryContainerLight = Color(0xFFC8E6FF)
 val onSecondaryContainerLight = Color(0xFF004C6E)
-val tertiaryLight = Color(0xFF006874)
+val tertiaryLight = Color(0xFFF3EDED)
 val onTertiaryLight = Color(0xFFFFFFFF)
 val tertiaryContainerLight = Color(0xFF9EEFFD)
 val onTertiaryContainerLight = Color(0xFF004F58)
@@ -22,7 +22,7 @@ val errorContainerLight = Color(0xFFFFDAD6)
 val onErrorContainerLight = Color(0xFF93000A)
 val backgroundLight = Color(0xFFFDF9EC)
 val onBackgroundLight = Color(0xFF1D1C14)
-val surfaceLight = Color(0xFFF4FBF9)
+val surfaceLight = Color(0xFFF3EDED)
 val onSurfaceLight = Color(0xFF161D1C)
 val surfaceVariantLight = Color(0xFFE7E3D1)
 val onSurfaceVariantLight = Color(0xFF49473A)
@@ -112,8 +112,8 @@ val surfaceContainerLightHighContrast = Color(0xFFDDE4E2)
 val surfaceContainerHighLightHighContrast = Color(0xFFCFD6D4)
 val surfaceContainerHighestLightHighContrast = Color(0xFFC1C8C7)
 
-val primaryDark = Color(0xFFCECA75)
-val onPrimaryDark = Color(0xFF333200)
+val primaryDark = Color(0xFFEBE68E)
+val onPrimaryDark = Color(0xFF1E293B)
 val primaryContainerDark = Color(0xFF4B4900)
 val onPrimaryContainerDark = Color(0xFFEBE68E)
 val secondaryDark = Color(0xFF94CDF7)

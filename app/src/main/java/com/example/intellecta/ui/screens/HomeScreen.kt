@@ -1,6 +1,5 @@
 package com.example.intellecta.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,8 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +35,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aibrain.ui.theme.surfaceContainerLight
 import com.example.intellecta.navigation.Screens
 import com.example.intellecta.ui.components.RowButton
 
@@ -122,7 +118,7 @@ fun HomeScreen(navCtrl :NavHostController) {
             ) {
                 Box(
                     modifier = Modifier.size(40.dp)
-                        .background(color = surfaceContainerLight)
+                        .background(color = MaterialTheme.colorScheme.primary)
                         .clip(RoundedCornerShape(4.dp)),
                     contentAlignment = Alignment.Center
                 ) {
@@ -256,9 +252,7 @@ fun HomeScreen(navCtrl :NavHostController) {
                 fontStyle = FontStyle.Normal,
             )
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
-            RowButton("NoteList") {navCtrl.navigate(Screens.NotesListScreen.route)}
+            RowButton("NoteList") {navCtrl.navigate(Screens.HomePage.route)}
         }
-
-
     }
 }

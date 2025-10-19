@@ -49,8 +49,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.aibrain.ui.theme.attachmentCardBackground
-import com.example.aibrain.ui.theme.attachmentCardContent
+//import com.example.aibrain.ui.theme.attachmentCardBackground
+//import com.example.aibrain.ui.theme.attachmentCardContent
 import com.example.intellecta.R
 import com.example.intellecta.model.AttachmentsOption
 import com.example.intellecta.model.FileListItemCard
@@ -152,8 +152,8 @@ fun NoteDetailsScreen(noteId:Int,navCtrl: NavHostController){
                     .fillMaxWidth(),
                 // 5. Customize the button's colors.
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f),
-                    contentColor = MaterialTheme.colorScheme.attachmentCardContent
+//                    containerColor = MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f),
+//                    contentColor = MaterialTheme.colorScheme.attachmentCardContent
                 )
             ) {
                 Text(text = "Summarize with AI")

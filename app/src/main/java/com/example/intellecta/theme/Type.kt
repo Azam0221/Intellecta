@@ -1,4 +1,4 @@
-package com.example.aibrain.ui.theme
+package com.example.intellecta.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

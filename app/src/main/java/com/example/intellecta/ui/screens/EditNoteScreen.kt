@@ -49,8 +49,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.aibrain.ui.theme.attachmentCardBackground
-import com.example.aibrain.ui.theme.attachmentCardContent
+//import com.example.aibrain.ui.theme.attachmentCardBackground
+//import com.example.aibrain.ui.theme.attachmentCardContent
 import com.example.intellecta.fileManaging.FileType
 import com.example.intellecta.R
 import com.example.intellecta.fileManaging.getFileNameFromUri
@@ -316,8 +316,8 @@ fun EditNoteScreen(noteId : Int , navCtrl: NavHostController){
                     .fillMaxWidth(),
                 // 5. Customize the button's colors.
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f),
-                    contentColor = MaterialTheme.colorScheme.attachmentCardContent
+//                    containerColor = MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f),
+//                    contentColor = MaterialTheme.colorScheme.attachmentCardContent
                 )
             ) {
                 Text(text = "Update Note")

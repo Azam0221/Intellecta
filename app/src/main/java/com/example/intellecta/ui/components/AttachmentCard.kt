@@ -19,40 +19,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.aibrain.ui.theme.attachmentCardBackground
-import com.example.aibrain.ui.theme.attachmentCardContent
-@Composable
-fun AttachmentCard(
-    @DrawableRes imageRes: Int,
-    docType: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .height(50.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .clickable { onClick() }
-            .background(MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f)),
-             contentAlignment = Alignment.Center,
-
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp), // spacing between icon & text
-            modifier = Modifier.padding(start = 6.dp , end = 4.dp)
-        ) {
-
-            Icon(
-                painter = painterResource(id = imageRes),
-                contentDescription = docType,
-                tint = MaterialTheme.colorScheme.attachmentCardContent
-            )
-            Text(
-                text = docType,
-                color = MaterialTheme.colorScheme.attachmentCardContent
-            )
-            Spacer(modifier= Modifier.padding(horizontal = 2.dp))
-        }
-    }
-}
+//
+//@Composable
+//fun AttachmentCard(
+//    @DrawableRes imageRes: Int,
+//    docType: String,
+//    modifier: Modifier = Modifier,
+//    onClick: () -> Unit
+//) {
+//    Box(
+//        modifier = modifier
+//            .height(50.dp)
+//            .clip(RoundedCornerShape(16.dp))
+//            .clickable { onClick() }
+//            .background(MaterialTheme.colorScheme.attachmentCardBackground.copy(0.5f)),
+//             contentAlignment = Alignment.Center,
+//
+//    ) {
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.spacedBy(8.dp), // spacing between icon & text
+//            modifier = Modifier.padding(start = 6.dp , end = 4.dp)
+//        ) {
+//
+//            Icon(
+//                painter = painterResource(id = imageRes),
+//                contentDescription = docType,
+//                tint = MaterialTheme.colorScheme.attachmentCardContent
+//            )
+//            Text(
+//                text = docType,
+//                color = MaterialTheme.colorScheme.attachmentCardContent
+//            )
+//            Spacer(modifier= Modifier.padding(horizontal = 2.dp))
+//        }
+//    }
+//}

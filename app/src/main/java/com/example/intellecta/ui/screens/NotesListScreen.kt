@@ -175,5 +175,6 @@ fun NoteListScreen(navCtrl:NavHostController) {
                 }
             )
         }
+        //
     }
 }

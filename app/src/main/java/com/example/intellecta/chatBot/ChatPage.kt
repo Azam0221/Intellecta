@@ -47,7 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatPage(modifier : Modifier = Modifier) {
+fun ChatPage() {
 
     val viewModel: ChatViewModel = koinViewModel()
     Scaffold(
@@ -67,7 +67,7 @@ fun ChatPage(modifier : Modifier = Modifier) {
                                 horizontalArrangement = Arrangement.Center) {
 
                                 Icon(
-                                    painter = painterResource(R.drawable.depth_5__frame_0__2_),
+                                    painter = painterResource(R.drawable.outline_keyboard_voice_24),
                                     contentDescription = "Bot",
                                     modifier = Modifier.size(50.dp),
                                     tint = Color.Black

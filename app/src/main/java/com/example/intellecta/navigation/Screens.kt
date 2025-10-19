@@ -8,9 +8,13 @@ sealed class Screens(val route: String ) {
     data object EditNoteScreen   : Screens("edit_note_screen/{noteId}"){
         fun createRoute(noteId: Int) = "edit_note_screen/$noteId"
     }
-    data object ChatBot          : Screens("chat_bot")
+    data object ChatBot          : Screens("bot_page")
     data object NoteDetailsScreen: Screens("note_details_screen/{noteId}"){
         fun createRoute(noteId: Int) = "note_details_screen/$noteId"
     }
     data object AllFilesScreen   : Screens("all_files")
+    data object HomePage   : Screens("home_page")
+    data object SearchPage   : Screens("search_page")
+    data object ProfilePage   : Screens("profile_page")
+    data object BottomNavScreen      : Screens("bottom_nav_screen")
 }

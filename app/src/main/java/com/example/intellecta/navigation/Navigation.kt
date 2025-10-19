@@ -15,6 +15,7 @@ import com.example.intellecta.chatBot.ChatPage
 import com.example.intellecta.ui.screens.AddNoteScreen
 import com.example.intellecta.ui.screens.AllFilesScreen
 import com.example.intellecta.ui.screens.EditNoteScreen
+import com.example.intellecta.ui.screens.HomePage
 import com.example.intellecta.ui.screens.HomeScreen
 import com.example.intellecta.ui.screens.NoteDetailsScreen
 import com.example.intellecta.ui.screens.NoteListScreen
@@ -26,7 +27,7 @@ fun Navigation(){
 
     NavHost(
         navController = navCtrl,
-        startDestination = Screens.HomeScreen.route
+        startDestination = Screens.BottomNavScreen.route
     ){
         composable(Screens.HomeScreen.route
            ){
@@ -153,12 +154,13 @@ fun Navigation(){
             NoteDetailsScreen(noteId,navCtrl)
         }
 
-        composable(Screens.ChatBot.route){
-            ChatPage()
+        composable(Screens.BottomNavScreen.route){
+            BottomNavBar(navCtrl)
         }
 
         composable(Screens.AllFilesScreen.route){
             AllFilesScreen(navCtrl)
         }
+
     }
 }
