@@ -34,7 +34,7 @@ class NoteViewModel(
 
 //    fun onTitleChange(newValue: String) {
 //        _uiState.value = _uiState.value.copy(
-//            note = _uiState.value.note.copy(title = newValue)
+//            note = _uiState.value.note.c opy(title = newValue)
 //        )
 //    }
 //

@@ -17,4 +17,9 @@ sealed class Screens(val route: String ) {
     data object SearchPage   : Screens("search_page")
     data object ProfilePage   : Screens("profile_page")
     data object BottomNavScreen      : Screens("bottom_nav_screen")
+    data object AddNotePage     : Screens("add_note_page")
+    data object EditNotePage     : Screens("edit_note_page/{noteId}") {
+        fun createRoute(noteId: Int) = "edit_note_page/$noteId"
+    }
+    data object FileStoragePage     : Screens("file_storage_page")
 }

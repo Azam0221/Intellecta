@@ -35,6 +35,7 @@ fun AttachmentsOptionBox(
         onDismissRequest = onDismiss,
         modifier = Modifier.width(170.dp)
             .height(180.dp)
+            .background(color = MaterialTheme.colorScheme.primary)
     ) {
         options.forEach { option ->
             DropdownMenuItem(

@@ -61,7 +61,7 @@ fun BottomNavBar(navCtrl:NavHostController){
         floatingActionButton = {
             if (selectedIndex == 0) {
                 FloatingActionButton(
-                    onClick = { navCtrl.navigate(Screens.AddNoteScreen.route) },
+                    onClick = { navCtrl.navigate(Screens.AddNotePage.route) },
                     shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.padding(20.dp),
                     containerColor = MaterialTheme.colorScheme.secondary,
@@ -71,7 +71,7 @@ fun BottomNavBar(navCtrl:NavHostController){
                         imageVector = Icons.Default.Add,
                         contentDescription = "add",
                     )
-                }
+                 }
             }
         }
     ) { innerPadding ->
@@ -85,7 +85,7 @@ fun ContentBottomNavScreen(modifier: Modifier, selectedIndex: Int, navCtrl: NavH
     when (selectedIndex) {
         0 -> HomePage(navCtrl = navCtrl)
         1 -> SearchPage()
-        2 -> ChatPage()
+        2 -> ChatPage(navCtrl)
         3-> ProfilePage()
     }
 

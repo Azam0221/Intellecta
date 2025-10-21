@@ -1,6 +1,7 @@
 package com.example.intellecta.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -83,7 +84,8 @@ fun HomePage(navCtrl:NavHostController){
                         Icon(
                             painter = painterResource(R.drawable.baseline_menu_24),
                             contentDescription = "Menu",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.clickable { navCtrl.navigate(Screens.FileStoragePage.route) }
                         )
                         Spacer(modifier = Modifier.weight(1f))
 
@@ -97,7 +99,8 @@ fun HomePage(navCtrl:NavHostController){
                         Icon(
                             painter = painterResource(R.drawable.outline_settings_24),
                             contentDescription = "Menu",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.clickable { navCtrl.navigate(Screens.ChatBot.route) }
                         )
                         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             }
@@ -119,7 +122,7 @@ fun HomePage(navCtrl:NavHostController){
                         time = note.timeStamp,
                         attachmentCount = 2,
                         onClick = {
-                            navCtrl.navigate(Screens.NoteDetailsScreen.createRoute(note.id))
+                            navCtrl.navigate(Screens.EditNotePage.createRoute(note.id))
                         },
                         onLongPress = {
                             noteToDelete = note.id

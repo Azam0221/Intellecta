@@ -2,6 +2,7 @@ package com.example.intellecta.chatBot
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,65 +40,64 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.intellecta.R
+import com.example.intellecta.navigation.Screens
 import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatPage() {
+fun ChatPage(navCtrl:NavHostController) {
 
     val viewModel: ChatViewModel = koinViewModel()
-    Scaffold(
-
-        topBar = {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
-            ){
-            TopAppBar(
-                title = {
-
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center) {
-
-                                Icon(
-                                    painter = painterResource(R.drawable.outline_keyboard_voice_24),
-                                    contentDescription = "Bot",
-                                    modifier = Modifier.size(50.dp),
-                                    tint = Color.Black
-                                )
-                                Spacer(modifier = Modifier.padding(10.dp))
-                                Text("ChatMate", fontSize = 24.sp, fontWeight = FontWeight.Bold,
-                                    color = Color.Black)
-                            }
-                        },
-                       // colors = TopAppBarDefaults.topAppBarColors(Color(0xFFB8D89D))
 
 
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.primary)
 
-            )
-        }}
-    ) { innerPadding->
-
-        Column(modifier = Modifier
-            .padding(innerPadding)
-//            .background(
-//                brush = Brush.verticalGradient(
-//                    colors = listOf(
-//                        Color.Black.copy(0.9f), // Start color
-//                        Color(0xFFB8D89D)
-//                    )
-//                )
-          //  )
         ) {
-            
+            Spacer(modifier = Modifier.padding(vertical = 16.dp))
+            Row(
+                modifier = Modifier.padding(top = 12.dp).fillMaxWidth()
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.secondary),
+                verticalAlignment = Alignment.CenterVertically,
+                //  horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                Icon(
+                    painter = painterResource(R.drawable.baseline_menu_24),
+                    contentDescription = "Menu",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.clickable { navCtrl.popBackStack() }
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "InTeLlecta",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 22.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                Icon(
+                    painter = painterResource(R.drawable.outline_settings_24),
+                    contentDescription = "Menu",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+            }
+
+            Spacer(modifier = Modifier.padding(vertical = 12.dp))
+
+
             MessageList(modifier = Modifier.weight(1f), messageList = viewModel.messageList)
             MessageInput(onMessageSend = {
                 viewModel.sendMessage(it)
@@ -104,8 +105,6 @@ fun ChatPage() {
             })
 
         }
-
-    }
 }
 
 
@@ -119,10 +118,11 @@ fun MessageInput(onMessageSend:(String)-> Unit)
     var message by remember {
         mutableStateOf("")}
 
-    Row(modifier = Modifier.padding(8.dp),
+    Row(modifier = Modifier.fillMaxWidth().
+        background(shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), color =  MaterialTheme.colorScheme.secondary )
+        .padding(bottom = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-
+        horizontalArrangement = Arrangement.Center,
          ){
         OutlinedTextField(
             modifier = Modifier.weight(1f),
@@ -130,9 +130,21 @@ fun MessageInput(onMessageSend:(String)-> Unit)
             onValueChange = {message = it},
             singleLine = true,
             shape = RoundedCornerShape(20.dp),
+            textStyle = TextStyle(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedLabelColor = Color.Blue,    // Label color when focused
-                unfocusedLabelColor = Color.Blue)
+                cursorColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                focusedTextColor = MaterialTheme.colorScheme.secondary,
+                focusedPlaceholderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f),
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                disabledBorderColor = Color.Transparent,
+                errorBorderColor = Color.Transparent
+            )
 
 
         )
@@ -206,16 +218,10 @@ fun MessageRow(messageModel:MessageModel) {
                     )
                     .clip(RoundedCornerShape(16.dp))
                     .background(
-                        if (isModel) MaterialTheme.colorScheme.inverseOnSurface else Color(
-                            0xFFB8D89D
-                        )
+                        if (isModel) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiary.copy(0.5f)
                     )
                     .padding(16.dp)
-
-
             ) {
-
-
                     SelectionContainer {
                         Text(
                             text = messageModel.message,
@@ -224,8 +230,6 @@ fun MessageRow(messageModel:MessageModel) {
                         )
                     }
                 }
-
-
         }
     }
 }

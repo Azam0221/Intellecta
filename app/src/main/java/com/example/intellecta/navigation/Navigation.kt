@@ -12,9 +12,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.intellecta.chatBot.ChatPage
+import com.example.intellecta.ui.screens.AddNotePage
 import com.example.intellecta.ui.screens.AddNoteScreen
 import com.example.intellecta.ui.screens.AllFilesScreen
+import com.example.intellecta.ui.screens.EditNotePage
 import com.example.intellecta.ui.screens.EditNoteScreen
+import com.example.intellecta.ui.screens.FileStoragePage
 import com.example.intellecta.ui.screens.HomePage
 import com.example.intellecta.ui.screens.HomeScreen
 import com.example.intellecta.ui.screens.NoteDetailsScreen
@@ -161,6 +164,24 @@ fun Navigation(){
         composable(Screens.AllFilesScreen.route){
             AllFilesScreen(navCtrl)
         }
+        composable(Screens.AddNotePage.route){
+            AddNotePage(navCtrl)
+        }
+        composable(Screens.EditNotePage.route,
+            arguments = listOf(navArgument("noteId") { type = NavType.IntType }),){
+            backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
+            EditNotePage(noteId,navCtrl)
+        }
+
+        composable(Screens.FileStoragePage.route){
+           FileStoragePage(navCtrl)
+        }
+
+        composable(Screens.ChatBot.route){
+            ChatPage(navCtrl)
+        }
+
 
     }
 }
