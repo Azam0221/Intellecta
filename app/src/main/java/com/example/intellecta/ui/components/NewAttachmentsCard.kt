@@ -29,7 +29,7 @@ fun NewAttachmentsCard(
     @DrawableRes imageRes : Int,
     type: String,
     name: String,
-    onClick : () -> Unit
+    onClick : () -> Unit,
 ){
 
     Row(
@@ -51,6 +51,7 @@ fun NewAttachmentsCard(
 
         Text(
             text = name,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis, // Add this line
             modifier = Modifier.weight(1f), // Move the weight here
             color = MaterialTheme.colorScheme.onSurface

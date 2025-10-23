@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -64,35 +66,44 @@ fun ChatPage(navCtrl:NavHostController) {
         ) {
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
             Row(
-                modifier = Modifier.padding(top = 12.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .fillMaxWidth()
                     .height(50.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.secondary),
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .padding(horizontal = 8.dp), // Apply horizontal padding to the whole Row
                 verticalAlignment = Alignment.CenterVertically,
-                //  horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween // This is the key change
             ) {
-                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+               // Spacer(modifier = Modifier.padding(2.dp))
                 Icon(
-                    painter = painterResource(R.drawable.baseline_menu_24),
+                    painter = painterResource(R.drawable.baseline_arrow_back_24),
                     contentDescription = "Menu",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.clickable { navCtrl.popBackStack() }
                 )
-                Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    text = "InTeLlecta",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp
-                )
-                Spacer(modifier = Modifier.weight(1f))
 
-                Icon(
-                    painter = painterResource(R.drawable.outline_settings_24),
-                    contentDescription = "Menu",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "InTeLlecta Assistant",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+                    Icon(
+                        painter = painterResource(R.drawable.bot_2),
+                        contentDescription = "bot",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(24.dp))
             }
 
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
@@ -128,6 +139,7 @@ fun MessageInput(onMessageSend:(String)-> Unit)
             modifier = Modifier.weight(1f),
             value = message,
             onValueChange = {message = it},
+            placeholder = ({ Text(text= "Type here", color = MaterialTheme.colorScheme.onSurface) }),
             singleLine = true,
             shape = RoundedCornerShape(20.dp),
             textStyle = TextStyle(
@@ -170,7 +182,7 @@ fun MessageList(modifier:  Modifier = Modifier, messageList: List<MessageModel>)
             verticalArrangement = Arrangement.Center) {
             Icon(
                 modifier = Modifier.size(50.dp),
-                painter = painterResource(R.drawable.outline_attachment_24),
+                painter = painterResource(R.drawable.bot_2),
                 contentDescription = "ask",
                 tint = Color.Gray
 
@@ -199,7 +211,7 @@ fun MessageRow(messageModel:MessageModel) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         if (isModel) {
             Icon(
-                painter = painterResource(R.drawable.outline_sticky_note_2_24),
+                painter = painterResource(R.drawable.bot),
                 contentDescription = "bot",
                 modifier = Modifier.padding(start = 4.dp)
             )
@@ -231,6 +243,14 @@ fun MessageRow(messageModel:MessageModel) {
                     }
                 }
         }
+        if (!isModel.equals("model")) {
+            Icon(
+                painter = painterResource(R.drawable.outline_person_24),
+                contentDescription = "person",
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
+
     }
 }
 

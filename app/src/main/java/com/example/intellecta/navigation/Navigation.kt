@@ -20,6 +20,7 @@ import com.example.intellecta.ui.screens.EditNoteScreen
 import com.example.intellecta.ui.screens.FileStoragePage
 import com.example.intellecta.ui.screens.HomePage
 import com.example.intellecta.ui.screens.HomeScreen
+import com.example.intellecta.ui.screens.NoteDetailPage
 import com.example.intellecta.ui.screens.NoteDetailsScreen
 import com.example.intellecta.ui.screens.NoteListScreen
 
@@ -180,6 +181,13 @@ fun Navigation(){
 
         composable(Screens.ChatBot.route){
             ChatPage(navCtrl)
+        }
+
+        composable(Screens.NoteDetailPage.route,
+            arguments = listOf(navArgument("noteId") { type = NavType.IntType }),){
+                backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
+            NoteDetailPage(noteId,navCtrl)
         }
 
 

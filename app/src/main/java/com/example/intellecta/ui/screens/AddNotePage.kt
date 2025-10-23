@@ -289,6 +289,7 @@ fun AddNotePage(navCtrl:NavHostController){
             }
         }
 
+
         Spacer(modifier = Modifier.weight(1f))
 
         Button(

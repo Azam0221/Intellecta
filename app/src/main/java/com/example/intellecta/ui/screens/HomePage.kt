@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -97,10 +98,10 @@ fun HomePage(navCtrl:NavHostController){
                         Spacer(modifier = Modifier.weight(1f))
 
                         Icon(
-                            painter = painterResource(R.drawable.outline_settings_24),
+                            painter = painterResource(R.drawable.bot_2),
                             contentDescription = "Menu",
                             tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.clickable { navCtrl.navigate(Screens.ChatBot.route) }
+                            modifier = Modifier.size(30.dp).clickable { navCtrl.navigate(Screens.ChatBot.route) }
                         )
                         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             }
@@ -122,7 +123,7 @@ fun HomePage(navCtrl:NavHostController){
                         time = note.timeStamp,
                         attachmentCount = 2,
                         onClick = {
-                            navCtrl.navigate(Screens.EditNotePage.createRoute(note.id))
+                            navCtrl.navigate(Screens.NoteDetailPage.createRoute(note.id))
                         },
                         onLongPress = {
                             noteToDelete = note.id
