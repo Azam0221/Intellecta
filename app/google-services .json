@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "726171239821",
+    "project_id": "intellecta-6287a",
+    "storage_bucket": "intellecta-6287a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726171239821:android:8ffda0b62979a6540229c4",
+        "android_client_info": {
+          "package_name": "com.example.intellecta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkpTUxxUzyljVzq76JbbnaKqxiK_ZPIT8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -38,6 +38,7 @@ fun FileStorageCard(
 
     Row(
         modifier = Modifier.padding(start = 12.dp, end = 12.dp).fillMaxWidth()
+            .clickable { onClick() }
             .height(55.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.tertiary),

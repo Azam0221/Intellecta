@@ -34,7 +34,6 @@ class ChatViewModel(
                 val localData = noteRepository.getAllNotes()
                 val contextText = localData.joinToString("\n") { "Title: ${it.title}, Content: ${it.content}" }
 
-
                 val chat = generativeModel.startChat(
                     history = messageList.map {
                         content(it.role) { text(it.message) }
@@ -42,15 +41,12 @@ class ChatViewModel(
                         text("Use the following local data to answer questions and don't tell user nothing just answer him what he is asking: \n$contextText")
                     }
                 )
-
-
                 messageList.add(MessageModel(question, "user"))
                 messageList.add(MessageModel("Thinking....","model"))
 
                 val response = chat.sendMessage(question)
                 messageList.removeAt(messageList.lastIndex)
                 messageList.add(MessageModel(response.text.toString(), "model"))
-
 
             }
             catch (e: Exception) {
