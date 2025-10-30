@@ -66,8 +66,8 @@ fun NewNoteCard(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface,
-                    overflow = TextOverflow.Ellipsis, // Add this line
-                    modifier = Modifier.weight(1f) // Move the weight here
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
 
                 Icon(

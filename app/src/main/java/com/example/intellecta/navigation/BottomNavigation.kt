@@ -86,7 +86,7 @@ fun ContentBottomNavScreen(modifier: Modifier, selectedIndex: Int, navCtrl: NavH
         0 -> HomePage(navCtrl = navCtrl)
         1 -> SearchPage()
         2 -> ChatPage(navCtrl)
-        3-> ProfilePage()
+        3-> ProfilePage(navCtrl)
     }
 
 }
