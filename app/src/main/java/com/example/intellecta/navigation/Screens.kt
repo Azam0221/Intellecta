@@ -25,4 +25,6 @@ sealed class Screens(val route: String ) {
     data object NoteDetailPage     : Screens("note_detail_page/{noteId}"){
         fun createRoute(noteId: Int) = "note_detail_page/$noteId"
     }
+    data object LoginPage     : Screens("login_page")
+    data object SignupPage     : Screens("signup_page")
 }

@@ -7,6 +7,7 @@ import com.example.intellecta.dao.IntellectaDatabase
 import com.example.intellecta.fileManaging.FileManager
 import com.example.intellecta.repository.FileStorageRepository
 import com.example.intellecta.repository.NoteRepository
+import com.example.intellecta.viewmodel.AuthViewModel
 import com.example.intellecta.viewmodel.FilesManagingViewModel
 import com.example.intellecta.viewmodel.NoteViewModel
 import org.koin.core.module.dsl.viewModel
@@ -40,5 +41,6 @@ val appModule = module {
     viewModel{ NoteViewModel(get(),get()) }
     viewModel{ ChatViewModel(get()) }
     viewModel{ FilesManagingViewModel(get(),get()) }
+    viewModel { AuthViewModel() }
 
 }

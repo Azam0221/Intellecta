@@ -6,12 +6,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.intellecta.chatBot.ChatPage
+import com.example.intellecta.model.AuthState
 import com.example.intellecta.ui.screens.AddNotePage
 import com.example.intellecta.ui.screens.AddNoteScreen
 import com.example.intellecta.ui.screens.AllFilesScreen
@@ -20,18 +23,23 @@ import com.example.intellecta.ui.screens.EditNoteScreen
 import com.example.intellecta.ui.screens.FileStoragePage
 import com.example.intellecta.ui.screens.HomePage
 import com.example.intellecta.ui.screens.HomeScreen
+import com.example.intellecta.ui.screens.LoginPage
 import com.example.intellecta.ui.screens.NoteDetailPage
 import com.example.intellecta.ui.screens.NoteDetailsScreen
 import com.example.intellecta.ui.screens.NoteListScreen
+import com.example.intellecta.ui.screens.SignupPage
+import com.example.intellecta.viewmodel.AuthViewModel
 
 @Composable
 fun Navigation(){
     val navCtrl = rememberNavController()
     val animationDuration = 300
+    val authViewModel : AuthViewModel = viewModel { AuthViewModel() }
+    val authState = authViewModel.authState.collectAsState()
 
     NavHost(
         navController = navCtrl,
-        startDestination = Screens.BottomNavScreen.route
+        startDestination = if (authState.value == AuthState.Authenticated) Screens.BottomNavScreen.route else Screens.LoginPage.route
     ){
         composable(Screens.HomeScreen.route
            ){
@@ -188,6 +196,14 @@ fun Navigation(){
                 backStackEntry ->
             val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
             NoteDetailPage(noteId,navCtrl)
+        }
+
+        composable(Screens.LoginPage.route){
+            LoginPage(navCtrl)
+        }
+
+        composable(Screens.SignupPage.route){
+            SignupPage(navCtrl)
         }
 
 
