@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.example.intellecta.chatBot.ChatViewModel
 import com.example.intellecta.dao.IntellectaDatabase
+import com.example.intellecta.data.TokenManager
 import com.example.intellecta.fileManaging.FileManager
 import com.example.intellecta.network.ApiService
 import com.example.intellecta.network.AuthInterceptor
@@ -76,6 +77,6 @@ val appModule = module {
     viewModel{ NoteViewModel(get(),get()) }
     viewModel{ ChatViewModel(get()) }
     viewModel{ FilesManagingViewModel(get(),get()) }
-    viewModel { AuthViewModel() }
+    viewModel { AuthViewModel(get()) }
 
 }

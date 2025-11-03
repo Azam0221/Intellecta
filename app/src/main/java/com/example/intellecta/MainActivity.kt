@@ -8,6 +8,7 @@ import com.example.intellecta.theme.IntellectaTheme
 import com.example.intellecta.navigation.Navigation
 import com.example.intellecta.ui.screens.LoginPage
 import com.example.intellecta.ui.screens.SignupPage
+import com.example.intellecta.ui.screens.TestApiScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             IntellectaTheme {
                Navigation()
+                //TestApiScreen()
 
 
             }

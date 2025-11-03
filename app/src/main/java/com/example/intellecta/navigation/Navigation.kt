@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.intellecta.chatBot.ChatPage
+import com.example.intellecta.data.TokenManager
 import com.example.intellecta.model.AuthState
 import com.example.intellecta.ui.screens.AddNotePage
 import com.example.intellecta.ui.screens.AddNoteScreen
@@ -28,13 +29,15 @@ import com.example.intellecta.ui.screens.NoteDetailPage
 import com.example.intellecta.ui.screens.NoteDetailsScreen
 import com.example.intellecta.ui.screens.NoteListScreen
 import com.example.intellecta.ui.screens.SignupPage
+import com.example.intellecta.ui.screens.TestApiScreen
 import com.example.intellecta.viewmodel.AuthViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun Navigation(){
     val navCtrl = rememberNavController()
     val animationDuration = 300
-    val authViewModel : AuthViewModel = viewModel { AuthViewModel() }
+    val authViewModel : AuthViewModel = koinViewModel()
     val authState = authViewModel.authState.collectAsState()
 
     NavHost(
@@ -204,6 +207,10 @@ fun Navigation(){
 
         composable(Screens.SignupPage.route){
             SignupPage(navCtrl)
+        }
+
+        composable(Screens.TestScreen.route){
+           TestApiScreen()
         }
 
 

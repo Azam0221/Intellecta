@@ -90,6 +90,35 @@ fun ProfilePage(navCtrl: NavHostController){
                 )
             }
         }
+
+        Spacer(modifier = Modifier.padding(vertical = 20.dp))
+
+        Button(
+            onClick = {  navCtrl.navigate(Screens.TestScreen.route) },
+
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 20.dp),
+            // 5. Customize the button's colors.
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Log Out",
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
     }
 
 }

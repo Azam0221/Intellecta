@@ -25,7 +25,7 @@ class NoteRepository (
                     fileName = attachedFile.displayName,
                     fileType = attachedFile.type.name,
                     fileData = it.name
-                )
+                ) 
                 fileDao.insertFile(fileMeta)
             }
         }

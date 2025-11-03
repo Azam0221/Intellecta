@@ -1,6 +1,7 @@
 package com.example.intellecta.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.example.intellecta.data.TokenManager
 import com.example.intellecta.model.AuthState
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 
 
-class AuthViewModel: ViewModel() {
+class AuthViewModel(
+    private val tokenManager: TokenManager
+): ViewModel() {
 
     private val auth : FirebaseAuth = FirebaseAuth.getInstance()
 
@@ -19,7 +22,7 @@ class AuthViewModel: ViewModel() {
         if(auth.currentUser==null){
             _authState.value = AuthState.Unauthenticated
         }
-        else{
+        else if(auth.currentUser != null && tokenManager.hasToken()){
             _authState.value = AuthState.Authenticated
         }
     }
@@ -35,7 +38,22 @@ class AuthViewModel: ViewModel() {
         auth.signInWithEmailAndPassword(email,password)
             .addOnCompleteListener { task->
                 if(task.isSuccessful){
-                    _authState.value = AuthState.Authenticated
+                    task.result.user?.getIdToken(true)?.addOnCompleteListener { tokenTask->
+                        if(tokenTask.isSuccessful) {
+                            val jwtToken = tokenTask.result?.token
+                            if (jwtToken != null) {
+                                tokenManager.saveToken(jwtToken)
+                                _authState.value = AuthState.Authenticated
+                            } else {
+                                _authState.value = AuthState.Error("Failed to get token")
+                            }
+                        }
+                        else {
+                            _authState.value = AuthState.Error(
+                                tokenTask.exception?.message ?: "Token error"
+                            )
+                        }
+                    }
                 }
                 else{
                     _authState.value = AuthState.Error("Something went wrong")
@@ -53,8 +71,21 @@ class AuthViewModel: ViewModel() {
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener { task->
                 if(task.isSuccessful){
-                    _authState.value = AuthState.Authenticated
-
+                    task.result.user?.getIdToken(true)?.addOnCompleteListener { tokenTask ->
+                        if (tokenTask.isSuccessful) {
+                            val jwtToken = tokenTask.result?.token
+                            if (jwtToken != null) {
+                                tokenManager.saveToken(jwtToken)
+                                _authState.value = AuthState.Authenticated
+                            } else {
+                                _authState.value = AuthState.Error("Failed to get token")
+                            }
+                        } else {
+                            _authState.value = AuthState.Error(
+                                tokenTask.exception?.message ?: "Token error"
+                            )
+                        }
+                    }
                 }
                 else{
                     _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
@@ -65,6 +96,7 @@ class AuthViewModel: ViewModel() {
 
     fun signout(){
         auth.signOut()
+        tokenManager.clearToken()
         _authState.value = AuthState.Unauthenticated
     }
 
