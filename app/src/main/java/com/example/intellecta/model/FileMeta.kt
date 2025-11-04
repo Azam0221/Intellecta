@@ -28,5 +28,8 @@ data class FileMeta(
     var isSynced : Boolean = false,
     var servedId : String? = null,
     var lastModified: Long = System.currentTimeMillis(),
-    var syncError : String? = null
+    var syncError : String? = null,
+
+    var isDeleted: Boolean = false,
+    var deletedAt: Long? = null
 )

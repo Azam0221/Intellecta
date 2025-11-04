@@ -28,15 +28,15 @@ interface NoteDao {
     @Query("SELECT * FROM notes WHERE id = :noteId")
     suspend fun getNote(noteId : Int) : Note
 
-    @Query("SELECT * FROM notes ORDER BY timeStamp")
+    @Query("SELECT * FROM notes WHERE isDeleted = 0 ORDER BY timeStamp DESC")
     suspend fun getAllNotes() : List<Note>
 
     @Transaction
-    @Query("SELECT * FROM notes WHERE id = :noteId")
+    @Query("SELECT * FROM notes WHERE id = :noteId AND isDeleted = 0")
     suspend fun getNoteWithFiles(noteId : Int) : NotesWithFiles
 
     @Transaction
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes WHERE isDeleted = 0 ORDER BY timeStamp DESC")
     suspend fun getAllNotesWithFiles(): List<NotesWithFiles>
 
     // SYNC query
@@ -46,13 +46,23 @@ interface NoteDao {
 
 
     @Query("UPDATE notes SET isSynced = 1, servedId = :servedId , lastModified = :syncTime WHERE id = :localId")
-    suspend fun markNotesAsSynced(localId: Int, servedId:String, syncTime:Long ) : List<Note>
+    suspend fun markNotesAsSynced(localId: Int, servedId:String, syncTime:Long ) : Int
 
     @Query("UPDATE notes SET isSynced = 0 WHERE id = :localId")
     suspend fun markNoteUnsynced(localId: Int)
 
     @Query("SELECT COUNT(*) FROM notes WHERE isSynced = 0")
     suspend fun countUnsyncedNotes(): Int
+
+    @Query("UPDATE notes SET isDeleted = 1 , deletedAt = :deletedAt, isSynced = 0 WHERE id = :noteId")
+    suspend fun softDeleteNote(noteId: Int, deletedAt: Long)
+
+    @Query("SELECT * FROM notes WHERE isDeleted = 1 AND isSynced = 0")
+    suspend fun getDeletedUnSyncedNotes() : List<Note>
+
+    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced=0")
+    suspend fun hardDeleteSyncedNotes()
+
 
 
 

@@ -69,7 +69,7 @@ val appModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl("http://10.132.249.180:8080/") // Change to your backend URL
+            .baseUrl(getBaseUrl())
             .client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

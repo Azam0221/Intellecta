@@ -27,12 +27,16 @@ abstract class IntellectaDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE notes ADD COLUMN servedId TEXT")
                 database.execSQL("ALTER TABLE notes ADD COLUMN lastModified INTEGER")
                  database.execSQL("ALTER TABLE notes ADD COLUMN  syncError TEXT")
+                database.execSQL("ALTER TABLE notes ADD COLUMN isDeleted INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE notes ADD COLUMN deletedAt INTEGER")
 
                 //New columns to files table
                 database.execSQL("ALTER TABLE files ADD COLUMN isSynced INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE files ADD COLUMN servedId TEXT")
                 database.execSQL("ALTER TABLE files ADD COLUMN lastModified INTEGER")
                 database.execSQL("ALTER TABLE files ADD COLUMN syncError TEXT")
+                database.execSQL("ALTER TABLE files ADD COLUMN isDeleted INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE files ADD COLUMN deletedAt INTEGER")
             }
         }
 

@@ -44,12 +44,21 @@ interface FileDao {
     @Query("SELECT * FROM files WHERE noteId = :noteId AND isSynced = 0")
     suspend fun getUnsyncedFilesForNote(noteId: Int): List<FileMeta>
 
-    @Query("UPDATE files SET isSynced = 1, backendId = :backendId, lastSyncedAt = :syncTime WHERE id = :localId")
-    suspend fun markFileSynced(localId: Int, backendId: String, syncTime: Long)
+    @Query("UPDATE files SET isSynced = 1, servedId = :backendId, lastModified = :syncTime WHERE id = :localId")
+    suspend fun markFileSynced(localId: Int, backendId: String, syncTime: Long) : Int
 
     @Query("UPDATE files SET isSynced = 0 WHERE noteId = :noteId")
     suspend fun markFilesUnsyncedForNote(noteId: Int)
 
     @Query("SELECT COUNT(*) FROM files WHERE isSynced = 0")
     suspend fun countUnsyncedFiles(): Int
+
+    @Query("UPDATE files SET isDeleted = 1, deletedAt = :deletedAt, isSynced = 0 WHERE id = :fileId")
+    suspend fun softDeleteFile(fileId: Int, deletedAt: Long)
+
+    @Query("SELECT * FROM files WHERE isDeleted = 1 AND isSynced = 0")
+    suspend fun getDeletedUnsyncedFiles(): List<FileMeta>
+
+    @Query("DELETE FROM files WHERE isDeleted = 1 AND isSynced = 1")
+    suspend fun hardDeleteSyncedFiles()
 }
