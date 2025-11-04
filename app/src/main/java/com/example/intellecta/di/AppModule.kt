@@ -13,6 +13,8 @@ import com.example.intellecta.repository.NoteRepository
 import com.example.intellecta.viewmodel.AuthViewModel
 import com.example.intellecta.viewmodel.FilesManagingViewModel
 import com.example.intellecta.viewmodel.NoteViewModel
+import com.example.intellecta.worker.SyncNotesWorker
+import com.google.ai.client.generativeai.BuildConfig
 import okhttp3.OkHttp
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,6 +25,19 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 val appModule = module {
+
+    // Worker
+
+    worker {
+        SyncNotesWorker(
+            context = androidContext(),
+            params = get(),
+            apiService = get(),
+            noteDao = get(),
+            fileDao = get(),
+            fileStorageRepository = get()
+        )
+    }
 
     //Database singleton
 
