@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.browser.trusted.Token
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
 
 class TokenManager(context: Context){
 
@@ -22,6 +24,19 @@ class TokenManager(context: Context){
     fun saveToken(token: String){
         sharedPreferences.edit().putString("jwt_token", token).apply()
 
+    }
+
+    suspend fun getTokenAsync(forceRefresh: Boolean = false): String? {
+        return try {
+            val user = FirebaseAuth.getInstance().currentUser
+            val token = user?.getIdToken(forceRefresh)?.await()?.token
+            token?.let { saveToken(it) }
+
+            token
+        } catch (e: Exception) {
+
+            getToken()
+        }
     }
 
     fun getToken(): String? {
