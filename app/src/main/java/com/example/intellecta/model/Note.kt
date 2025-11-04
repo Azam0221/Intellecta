@@ -13,6 +13,10 @@ data class Note(
     var summary: String="",
     var category: String="",
     var timeStamp: Long = System.currentTimeMillis(),
+
+    var isSynced : Boolean = false,
+    var servedId : String? = null,
+    var lastModified: Long = System.currentTimeMillis(),
+    var syncError : String? = null
 )
 
- 

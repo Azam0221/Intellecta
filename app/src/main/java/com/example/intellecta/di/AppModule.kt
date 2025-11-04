@@ -18,6 +18,8 @@ import com.google.ai.client.generativeai.BuildConfig
 import okhttp3.OkHttp
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -46,7 +48,9 @@ val appModule = module {
             get<Application>(),
             IntellectaDatabase::class.java,
             "intellecta.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     //OkHttp Client with Auth Interceptor
@@ -83,15 +87,15 @@ val appModule = module {
 
     //Repository
 
-    single { NoteRepository(get(),get(),get()) }
+    single { NoteRepository(get(), get(), get()) }
     single { FileStorageRepository(get()) }
     single { FileManager(get()) }
 
     //Viewmodel
 
-    viewModel{ NoteViewModel(get(),get()) }
-    viewModel{ ChatViewModel(get()) }
-    viewModel{ FilesManagingViewModel(get(),get()) }
+    viewModel { NoteViewModel(get(), get()) }
+    viewModel { ChatViewModel(get()) }
+    viewModel { FilesManagingViewModel(get(), get()) }
     viewModel { AuthViewModel(get()) }
 
 }

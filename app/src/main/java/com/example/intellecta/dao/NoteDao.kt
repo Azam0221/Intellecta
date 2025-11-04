@@ -39,6 +39,23 @@ interface NoteDao {
     @Query("SELECT * FROM notes")
     suspend fun getAllNotesWithFiles(): List<NotesWithFiles>
 
+    // SYNC query
+
+    @Query("SELECT * FROM notes WHERE isSynced = 0 ORDER BY timeStamp ASC")
+    suspend fun getUnsyncedNotes() : List<Note>
+
+
+    @Query("UPDATE notes SET isSynced = 1, servedId = :servedId , lastModified = :syncTime WHERE id = :localId")
+    suspend fun markNotesAsSynced(localId: Int, servedId:String, syncTime:Long ) : List<Note>
+
+    @Query("UPDATE notes SET isSynced = 0 WHERE id = :localId")
+    suspend fun markNoteUnsynced(localId: Int)
+
+    @Query("SELECT COUNT(*) FROM notes WHERE isSynced = 0")
+    suspend fun countUnsyncedNotes(): Int
+
+
+
 
 }
 

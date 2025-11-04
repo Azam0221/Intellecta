@@ -23,5 +23,10 @@ data class FileMeta(
     var noteId : Int,
     var fileName : String, 
     var fileType : String,
-    var fileData : String
+    var fileData : String,
+
+    var isSynced : Boolean = false,
+    var servedId : String? = null,
+    var lastModified: Long = System.currentTimeMillis(),
+    var syncError : String? = null
 )
