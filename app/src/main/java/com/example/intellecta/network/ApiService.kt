@@ -29,7 +29,7 @@ interface ApiService{
     @POST("api/notes")
     suspend fun syncNotes( @Body request: NoteSyncRequest ): Response<NoteSyncResponse>
 
-    @PUT("api/notes/servedId")
+    @PUT("api/notes/{servedId}")
     suspend fun updateNotes(
         @Path("servedId") servedId: String,
         @Body request: NoteSyncRequest
