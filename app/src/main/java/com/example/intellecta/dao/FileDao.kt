@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.intellecta.model.FileMeta
+import com.example.intellecta.model.Note
 
 
 @Dao
@@ -38,27 +39,37 @@ interface FileDao {
 
     // SYNC query
 
-    @Query("SELECT * FROM files WHERE isSynced = 0")
-    suspend fun getUnsyncedFiles(): List<FileMeta>
+    @Query("SELECT * FROM notes WHERE isSynced = 0 AND isDeleted = 0 ORDER BY timeStamp ASC")
+    suspend fun getUnsyncedNotes() : List<Note>
 
-    @Query("SELECT * FROM files WHERE noteId = :noteId AND isSynced = 0")
-    suspend fun getUnsyncedFilesForNote(noteId: Int): List<FileMeta>
+    @Query("UPDATE notes SET isSynced = 1, servedId = :servedId , lastModified = :syncTime WHERE id = :localId")
+    suspend fun markNotesAsSynced(localId: Int, servedId: String, syncTime: Long) : Int
 
-    @Query("UPDATE files SET isSynced = 1, servedId = :backendId, lastModified = :syncTime WHERE id = :localId")
-    suspend fun markFileSynced(localId: Int, backendId: String, syncTime: Long) : Int
+    @Query("UPDATE notes SET isSynced = 0 WHERE id = :localId")
+    suspend fun markNoteUnsynced(localId: Int)
 
-    @Query("UPDATE files SET isSynced = 0 WHERE noteId = :noteId")
-    suspend fun markFilesUnsyncedForNote(noteId: Int)
+    @Query("SELECT COUNT(*) FROM notes WHERE isSynced = 0")
+    suspend fun countUnsyncedNot es(): Int
 
-    @Query("SELECT COUNT(*) FROM files WHERE isSynced = 0")
-    suspend fun countUnsyncedFiles(): Int
+    @Query("UPDATE notes SET isDeleted = 1 , deletedAt = :deletedAt, isSynced = 0 WHERE id = :noteId")
+    suspend fun softDeleteNote(noteId: Int, deletedAt: Long)
 
-    @Query("UPDATE files SET isDeleted = 1, deletedAt = :deletedAt, isSynced = 0 WHERE id = :fileId")
-    suspend fun softDeleteFile(fileId: Int, deletedAt: Long)
+    @Query("SELECT * FROM notes WHE RE isDeleted = 1 AND isSynced = 0")
+    suspend fun getDeletedUnSyncedNotes() : List<Note>
 
-    @Query("SELECT * FROM files WHERE isDeleted = 1 AND isSynced = 0")
-    suspend fun getDeletedUnsyncedFiles(): List<FileMeta>
+    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced = 0")
+    suspend fun hardDeleteSyncedNotes()
 
-    @Query("DELETE FROM files WHERE isDeleted = 1 AND isSynced = 1")
-    suspend fun hardDeleteSyncedFiles()
+    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced = 0 AND id = :localId")
+    suspend fun hardDeleteSyncedNoteById(localId: Int)
+
+    @Query("DELETE FROM notes WHERE id = :localId")
+    suspend fun hardDeleteNoteById(localId: Int)
+
+    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced = 1 AND deletedAt < :cutoffTime")
+    suspend fun hardDeleteOldSyncedNotes(cutoffTime: Long): Int
+
+    @Query("UPDATE notes SET syncError = :errorMessage WHERE id = :localId")
+    suspend fun markNoteSyncFailed(localId: Int, errorMessage: String)
+
 }

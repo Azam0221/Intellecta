@@ -41,9 +41,8 @@ interface NoteDao {
 
     // SYNC query
 
-    @Query("SELECT * FROM notes WHERE isSynced = 0 ORDER BY timeStamp ASC")
+    @Query("SELECT * FROM notes WHERE isSynced = 0 AND isDeleted = 0 ORDER BY timeStamp ASC")
     suspend fun getUnsyncedNotes() : List<Note>
-
 
     @Query("UPDATE notes SET isSynced = 1, servedId = :servedId , lastModified = :syncTime WHERE id = :localId")
     suspend fun markNotesAsSynced(localId: Int, servedId:String, syncTime:Long ) : Int
@@ -60,12 +59,11 @@ interface NoteDao {
     @Query("SELECT * FROM notes WHERE isDeleted = 1 AND isSynced = 0")
     suspend fun getDeletedUnSyncedNotes() : List<Note>
 
-    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced=0")
+    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced=1")
     suspend fun hardDeleteSyncedNotes()
 
-
-
-
+    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced=0 AND id = :localId")
+    suspend fun hardDeleteSyncedNoteById(localId: Int)
 
 }
 
