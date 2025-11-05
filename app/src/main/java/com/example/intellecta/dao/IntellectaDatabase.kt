@@ -40,7 +40,7 @@ abstract class IntellectaDatabase : RoomDatabase() {
             }
         }
 
-        fun getDatabase(context: Context): IntellectaDatabase {
+        fun getDatabase(context: Context): IntellectaDatabase { 
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,

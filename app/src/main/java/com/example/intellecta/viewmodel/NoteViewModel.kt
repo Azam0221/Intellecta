@@ -1,7 +1,9 @@
 package com.example.intellecta.viewmodel
 
+import android.app.Application
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.intellecta.fileManaging.FileManager
@@ -11,6 +13,7 @@ import com.example.intellecta.repository.NoteRepository
 import com.example.intellecta.model.AttachedFile
 import com.example.intellecta.model.FileMeta
 import com.example.intellecta.model.NoteUiState
+import com.example.intellecta.worker.SyncManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -19,8 +22,9 @@ import kotlinx.coroutines.launch
 
 class NoteViewModel(
     private val noteRepository: NoteRepository,
-    private val fileManager: FileManager
- ) : ViewModel() {
+    private val fileManager: FileManager,
+    application: Application
+ ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(NoteUiState())
     val uiState: StateFlow<NoteUiState> = _uiState
 
@@ -71,6 +75,7 @@ class NoteViewModel(
                     isSaved = true, error = null , isLoading = false,
                     attachedFiles = emptyList()
                 )
+                SyncManager.syncNow(getApplication())
                 Log.d("note" ,"notes added $note")
             }
             catch (e : Exception){
@@ -170,6 +175,7 @@ class NoteViewModel(
         viewModelScope.launch {
             noteRepository.updateNoteWithFiles(note,newFiles)
             loadNoteWithFiles(note.id)
+            SyncManager.syncNow(getApplication())
             Log.d("note" ,"notes updated $note")
         }
     }
@@ -178,6 +184,7 @@ class NoteViewModel(
         viewModelScope.launch {
             noteRepository.deleteNote(noteId)
             loadAllNotes()
+            SyncManager.syncNow(getApplication())
             Log.d("note" ,"notes updated $noteId")
         }
     }
