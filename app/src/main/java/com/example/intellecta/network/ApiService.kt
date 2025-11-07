@@ -26,7 +26,7 @@ interface ApiService{
     @GET("api/integration/test")
     suspend fun fullIntegrationTest(): Response<Map<String, Any>>
 
-    @POST("api/notes")
+    @POST("api/notes/sync")
     suspend fun syncNotes( @Body request: NoteSyncRequest ): Response<NoteSyncResponse>
 
     @PUT("api/notes/{servedId}")

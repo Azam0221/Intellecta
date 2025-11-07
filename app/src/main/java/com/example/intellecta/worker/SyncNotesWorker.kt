@@ -89,7 +89,6 @@ class SyncNotesWorker(
                             throw Exception("Failed to update note: ${response.message()}")
                         }
                     }
-                    failCount += syncFilesForNote(note.id, backendNoteId)
                 }
                 catch (e:Exception){
                     failCount++
@@ -108,127 +107,127 @@ class SyncNotesWorker(
     }
 
 
-    private suspend fun cleanupOldDeletions() {
-        val sevenDaysAgo = System.currentTimeMillis() - SEVEN_DAYS_MS
-        try {
-            Log.d(TAG, "Cleaning up old deletions before $sevenDaysAgo")
-            val notesDeleted = noteDao.hardDeleteOldSyncedNotes(sevenDaysAgo)
-            val filesDeleted = fileDao.hardDeleteOldSyncedFiles(sevenDaysAgo)
-            Log.d(TAG, "Cleanup complete. Removed $notesDeleted old notes and $filesDeleted old files.")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to cleanup old deletions", e)
-        }
-    }
+//    private suspend fun cleanupOldDeletions() {
+//        val sevenDaysAgo = System.currentTimeMillis() - SEVEN_DAYS_MS
+//        try {
+//            Log.d(TAG, "Cleaning up old deletions before $sevenDaysAgo")
+//            val notesDeleted = noteDao.hardDeleteOldSyncedNotes(sevenDaysAgo)
+//            val filesDeleted = fileDao.hardDeleteOldSyncedFiles(sevenDaysAgo)
+//            Log.d(TAG, "Cleanup complete. Removed $notesDeleted old notes and $filesDeleted old files.")
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Failed to cleanup old deletions", e)
+//        }
+//    }
 
-    private suspend fun syncDeletions(): Int {
-        var failCount = 0
-        val syncTime = System.currentTimeMillis()
-
-        // 1. Delete Files
-        val deletedFiles = fileDao.getDeletedUnsyncedFiles()
-        Log.d(TAG, "Found ${deletedFiles.size} files to delete from server.")
-        for (file in deletedFiles) {
-            try {
-                if (file.servedId == null) {
-                    // Deleted before it was ever synced. Just delete locally.
-                    fileDao.hardDeleteFileById(file.id)
-                } else {
-                    // Tell the server to delete it
-                    val response = apiService.deleteFile(file.servedId!!)
-                    if (response.isSuccessful) {
-                        // Mark as synced. It will be cleaned up in 7 days.
-                        fileDao.markFileSynced(file.id, file.servedId!!, syncTime)
-                    } else {
-                        throw Exception("Failed to delete file: ${response.message()}")
-                    }
-                }
-            } catch (e: Exception) {
-                failCount++
-                Log.e(TAG, "Failed to sync file deletion: ${file.fileName}", e)
-                fileDao.markFileSyncFailed(file.id, e.message ?: "Delete failed")
-            }
-        }
-
-        // 2. Delete Notes
-        val deletedNotes = noteDao.getDeletedUnSyncedNotes()
-        Log.d(TAG, "Found ${deletedNotes.size} notes to delete from server.")
-        for (note in deletedNotes) {
-            try {
-                if (note.servedId == null) {
-                    // Deleted before it was ever synced. Just delete locally.
-                    noteDao.hardDeleteNoteById(note.id)
-                } else {
-                    val response = apiService.deleteNote(note.servedId!!)
-                    if (response.isSuccessful) {
-                        // Mark as synced. It will be cleaned up in 7 days.
-                        noteDao.markNotesAsSynced(note.id, note.servedId!!, syncTime)
-                    } else {
-                        throw Exception("Failed to delete note: ${response.message()}")
-                    }
-                }
-            } catch (e: Exception) {
-                failCount++
-                Log.e(TAG, "Failed to sync note deletion: ${note.title}", e)
-                noteDao.markNoteSyncFailed(note.id, e.message ?: "Delete failed")
-            }
-        }
-
-        return failCount
-    }
+//    private suspend fun syncDeletions(): Int {
+//        var failCount = 0
+//        val syncTime = System.currentTimeMillis()
+//
+//        // 1. Delete Files
+//        val deletedFiles = fileDao.getDeletedUnSyncedNotes()
+//        Log.d(TAG, "Found ${deletedFiles.size} files to delete from server.")
+//        for (file in deletedFiles) {
+//            try {
+//                if (file.servedId == null) {
+//                    // Deleted before it was ever synced. Just delete locally.
+//                    fileDao.hardDeleteSyncedNoteById(file.id)
+//                } else {
+//                    // Tell the server to delete it
+//                    val response = apiService.deleteFile(file.servedId!!)
+//                    if (response.isSuccessful) {
+//                        // Mark as synced. It will be cleaned up in 7 days.
+//                        fileDao.markNotesAsSynced(file.id,file.servedId!!,syncTime)
+//                    } else {
+//                        throw Exception("Failed to delete file: ${response.message()}")
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                failCount++
+//                Log.e(TAG, "Failed to sync file deletion: ${file.fileName}", e)
+//              //  fileDao.markFileSyncFailed(file.id, e.message ?: "Delete failed")
+//            }
+//        }
+//
+//        // 2. Delete Notes
+//        val deletedNotes = noteDao.getDeletedUnSyncedNotes()
+//        Log.d(TAG, "Found ${deletedNotes.size} notes to delete from server.")
+//        for (note in deletedNotes) {
+//            try {
+//                if (note.servedId == null) {
+//                    // Deleted before it was ever synced. Just delete locally.
+//                    noteDao.hardDeleteSyncedNoteById(note.id)
+//                } else {
+//                    val response = apiService.deleteNote(note.servedId!!)
+//                    if (response.isSuccessful) {
+//                        // Mark as synced. It will be cleaned up in 7 days.
+//                        noteDao.markNotesAsSynced(note.id, note.servedId!!, syncTime)
+//                    } else {
+//                        throw Exception("Failed to delete note: ${response.message()}")
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                failCount++
+//                Log.e(TAG, "Failed to sync note deletion: ${note.title}", e)
+//               // noteDao.markNoteSyncFailed(note.id, e.message ?: "Delete failed")
+//            }
+//        }
+//
+//        return failCount
+//    }
 
     /**
      * Syncs all unsynced files for a specific note (CREATE-ONLY).
      */
-    private suspend fun syncFilesForNote(localNoteId: Int, backendNoteId: String): Int {
-        var failCount = 0
-        val unsyncedFiles = fileDao.getUnsyncedFilesForNote(localNoteId)
-        if (unsyncedFiles.isEmpty()) return 0
-
-        Log.d(TAG, "Found ${unsyncedFiles.size} files for note ID $localNoteId")
-
-        for (file in unsyncedFiles) {
-            try {
-                if (file.servedId != null) {
-                    // This file is already synced. This should not happen
-                    // if getUnsyncedFilesForNote is correct, but as a safeguard.
-                    Log.w(TAG, "Skipping file ${file.fileName}, already has server ID.")
-                    continue
-                }
-
-                val fileContent = readFileAsBase64(file.fileData)
-                if (fileContent.isEmpty()) {
-                    Log.w(TAG, "Skipping empty file: ${file.fileName}")
-                    continue
-                }
-
-                val fileRequest = FileSyncRequest(
-                    noteId = backendNoteId, // Use the server's note ID
-                    fileName = file.fileName,
-                    fileType = file.fileType,
-                    fileData = fileContent,
-                    localNoteId = localNoteId.toString(),
-                    localFileId = file.id.toString()
-                )
-
-                val fileResponse = apiService.syncFiles(fileRequest) // POST
-
-                if (fileResponse.isSuccessful && fileResponse.body() != null) {
-                    val backendFileId = fileResponse.body()!!.id
-                    val syncTime = System.currentTimeMillis()
-                    fileDao.markFileSynced(file.id, backendFileId, syncTime)
-                    Log.d(TAG, "File synced: ${file.fileName} -> $backendFileId")
-                } else {
-                    throw Exception("Failed to sync file: ${fileResponse.message()}")
-                }
-            } catch (e: Exception) {
-                failCount++
-                Log.e(TAG, "Failed to sync file: ${file.fileName}", e)
-                fileDao.markFileSyncFailed(file.id, e.message ?: "Unknown file error")
-            }
-        }
-        return failCount
-    }
-
+//    private suspend fun syncFilesForNote(localNoteId: Int, backendNoteId: String): Int {
+//        var failCount = 0
+//        val unsyncedFiles = fileDao.getUnsyncedFilesForNote(localNoteId)
+//        if (unsyncedFiles.isEmpty()) return 0
+//
+//        Log.d(TAG, "Found ${unsyncedFiles.size} files for note ID $localNoteId")
+//
+//        for (file in unsyncedFiles) {
+//            try {
+//                if (file.servedId != null) {
+//                    // This file is already synced. This should not happen
+//                    // if getUnsyncedFilesForNote is correct, but as a safeguard.
+//                    Log.w(TAG, "Skipping file ${file.fileName}, already has server ID.")
+//                    continue
+//                }
+//
+//                val fileContent = readFileAsBase64(file.fileData)
+//                if (fileContent.isEmpty()) {
+//                    Log.w(TAG, "Skipping empty file: ${file.fileName}")
+//                    continue
+//                }
+//
+//                val fileRequest = FileSyncRequest(
+//                    noteId = backendNoteId, // Use the server's note ID
+//                    fileName = file.fileName,
+//                    fileType = file.fileType,
+//                    fileData = fileContent,
+//                    localNoteId = localNoteId.toString(),
+//                    localFileId = file.id.toString()
+//                )
+//
+//                val fileResponse = apiService.syncFiles(fileRequest) // POST
+//
+//                if (fileResponse.isSuccessful && fileResponse.body() != null) {
+//                    val backendFileId = fileResponse.body()!!.id
+//                    val syncTime = System.currentTimeMillis()
+//                    fileDao.markFileSynced(file.id, backendFileId, syncTime)
+//                    Log.d(TAG, "File synced: ${file.fileName} -> $backendFileId")
+//                } else {
+//                    throw Exception("Failed to sync file: ${fileResponse.message()}")
+//                }
+//            } catch (e: Exception) {
+//                failCount++
+//                Log.e(TAG, "Failed to sync file: ${file.fileName}", e)
+//                fileDao.markFileSyncFailed(file.id, e.message ?: "Unknown file error")
+//            }
+//        }
+//        return failCount
+//    }
+//
 
 
 
