@@ -18,6 +18,7 @@ import com.google.ai.client.generativeai.BuildConfig
 import okhttp3.OkHttp
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.module.dsl.viewModel
@@ -93,7 +94,7 @@ val appModule = module {
 
     //Viewmodel
 
-    viewModel { NoteViewModel(get(), get()) }
+    viewModel { NoteViewModel(get(), get(),androidApplication()) }
     viewModel { ChatViewModel(get()) }
     viewModel { FilesManagingViewModel(get(), get()) }
     viewModel { AuthViewModel(get()) }

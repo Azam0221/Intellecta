@@ -49,12 +49,12 @@ interface FileDao {
     suspend fun markNoteUnsynced(localId: Int)
 
     @Query("SELECT COUNT(*) FROM notes WHERE isSynced = 0")
-    suspend fun countUnsyncedNot es(): Int
+    suspend fun countUnsyncedNotes(): Int
 
     @Query("UPDATE notes SET isDeleted = 1 , deletedAt = :deletedAt, isSynced = 0 WHERE id = :noteId")
     suspend fun softDeleteNote(noteId: Int, deletedAt: Long)
 
-    @Query("SELECT * FROM notes WHE RE isDeleted = 1 AND isSynced = 0")
+    @Query("SELECT * FROM notes WHERE isDeleted = 1 AND isSynced = 0")
     suspend fun getDeletedUnSyncedNotes() : List<Note>
 
     @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced = 0")

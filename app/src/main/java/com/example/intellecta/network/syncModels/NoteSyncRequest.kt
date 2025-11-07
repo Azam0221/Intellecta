@@ -6,6 +6,6 @@ data class NoteSyncRequest(
     val summary: String,
     val category: String,
     val timestamp: Long,
-    val localId: String? = null
+
 
 )

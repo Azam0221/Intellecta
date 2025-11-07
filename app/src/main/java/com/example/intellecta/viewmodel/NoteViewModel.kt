@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 class NoteViewModel(
     private val noteRepository: NoteRepository,
-    private val fileManager: FileManager,
+    private val fileManager: FileManager, 
     application: Application
  ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(NoteUiState())
