@@ -90,7 +90,7 @@ val appModule = module {
 
     single { NoteRepository(get(), get(), get()) }
     single { FileStorageRepository(get()) }
-    single { FileManager(get()) }
+    single { FileManager(androidContext()) }
 
     //Viewmodel
 
