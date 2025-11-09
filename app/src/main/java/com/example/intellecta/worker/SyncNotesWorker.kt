@@ -9,6 +9,7 @@ import androidx.work.WorkerParameters
 import com.example.intellecta.dao.FileDao
 import com.example.intellecta.dao.IntellectaDatabase
 import com.example.intellecta.dao.NoteDao
+import com.example.intellecta.data.TokenManager
 import com.example.intellecta.fileManaging.FileManager
 import com.example.intellecta.network.ApiService
 import com.example.intellecta.network.syncModels.FileSyncRequest
@@ -25,7 +26,8 @@ class SyncNotesWorker(
     private val apiService: ApiService,
     private val noteDao: NoteDao,
     private val fileDao: FileDao,
-    private val fileStorageRepository: FileStorageRepository
+    private val fileStorageRepository: FileStorageRepository,
+    private val tokenManager: TokenManager
 ) : CoroutineWorker(context, params) {
 
     companion object {
@@ -36,6 +38,20 @@ class SyncNotesWorker(
 
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+
+        try {
+            Log.e(TAG, "DO Work started")
+            val token = tokenManager.getTokenAsync(true)
+            if (token == null) {
+                Log.e(TAG, "Token refresh failed or user is not logged in. Retrying.")
+                return@withContext Result.retry()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Token refresh failed with exception. Retrying.", e)
+            return@withContext Result.retry()
+        }
+
+
         try {
             Log.d(TAG, "Sync worker starting...")
             var failCount = 0
@@ -74,7 +90,7 @@ class SyncNotesWorker(
                                 "Note created. Local ID: ${note.id} -> Server ID: $backendNoteId"
                             )
                         } else {
-                            throw Exception("Failed to create note: ${response.message()}")
+                            throw Exception("Failed to create note 1: ${response.message()}")
                         }
 
                     } else {

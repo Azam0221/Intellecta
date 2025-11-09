@@ -10,11 +10,11 @@ class AuthInterceptor(
 ):Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
+
         val originalRequest = chain.request()
 
-        val token = runBlocking {
-            tokenManager.getTokenAsync()
-        }
+        // 1. Get the token synchronously from SharedPreferences
+        val token = tokenManager.getToken()
 
         val request = if(token!=null){
             originalRequest.newBuilder()

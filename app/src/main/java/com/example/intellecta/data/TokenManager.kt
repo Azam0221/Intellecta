@@ -1,6 +1,7 @@
 package com.example.intellecta.data
 
 import android.content.Context
+import android.util.Log
 import androidx.browser.trusted.Token
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -27,15 +28,21 @@ class TokenManager(context: Context){
     }
 
     suspend fun getTokenAsync(forceRefresh: Boolean = false): String? {
-        return try {
-            val user = FirebaseAuth.getInstance().currentUser
-            val token = user?.getIdToken(forceRefresh)?.await()?.token
-            token?.let { saveToken(it) }
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            Log.w("TokenManager", "No Firebase user found in current context.")
+            return if (!forceRefresh) getToken() else null
+        }
 
+        return try {
+            val token = user.getIdToken(forceRefresh).await()?.token
+            token?.let {
+                saveToken(it)
+            }
             token
         } catch (e: Exception) {
-
-            getToken()
+            Log.e("TokenManager", "Error getting/refreshing token", e)
+            null
         }
     }
 

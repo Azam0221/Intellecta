@@ -38,7 +38,8 @@ val appModule = module {
             apiService = get(),
             noteDao = get(),
             fileDao = get(),
-            fileStorageRepository = get()
+            fileStorageRepository = get(),
+            tokenManager = get()
         )
     }
 
