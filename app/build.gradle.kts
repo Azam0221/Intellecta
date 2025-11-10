@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.koin.androidx.workmanager)
 
 
+
+
 // TFLite for on-device AI
     implementation("org.tensorflow:tensorflow-lite-task-text:0.4.0")
 
@@ -90,6 +92,13 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
+
+    // Supabase with BOM
+    implementation(platform("io.github.jan-tennert.supabase:bom:3.0.3"))
+    implementation("io.github.jan-tennert.supabase:storage-kt")
+
+    // Ktor Client Engine for Android (required)
+    implementation("io.ktor:ktor-client-android:3.0.0")
 
 
 // Secure Storage for JWT
