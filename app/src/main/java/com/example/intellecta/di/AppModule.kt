@@ -1,6 +1,7 @@
 package com.example.intellecta.di
 
 import android.app.Application
+import android.net.http.HttpResponseCache.install
 import androidx.room.Room
 import com.example.intellecta.chatBot.ChatViewModel
 import com.example.intellecta.dao.IntellectaDatabase
@@ -10,11 +11,13 @@ import com.example.intellecta.network.ApiService
 import com.example.intellecta.network.AuthInterceptor
 import com.example.intellecta.repository.FileStorageRepository
 import com.example.intellecta.repository.NoteRepository
+import com.example.intellecta.supabase_config.SupabaseConfig
 import com.example.intellecta.viewmodel.AuthViewModel
 import com.example.intellecta.viewmodel.FilesManagingViewModel
 import com.example.intellecta.viewmodel.NoteViewModel
 import com.example.intellecta.worker.SyncNotesWorker
 import com.google.ai.client.generativeai.BuildConfig
+import com.google.android.gms.auth.api.signin.internal.Storage
 import okhttp3.OkHttp
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -39,7 +42,16 @@ val appModule = module {
             noteDao = get(),
             fileDao = get(),
             fileStorageRepository = get(),
-            tokenManager = get()
+            tokenManager = get(),
+            get()
+        )
+    }
+
+    // Supabase
+    single {
+        SupabaseConfig.createClient(
+            supabaseKey = "",
+            supabaseUrl = ""
         )
     }
 

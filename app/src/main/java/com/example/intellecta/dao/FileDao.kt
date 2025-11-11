@@ -39,37 +39,21 @@ interface FileDao {
 
     // SYNC query
 
-    @Query("SELECT * FROM notes WHERE isSynced = 0 AND isDeleted = 0 ORDER BY timeStamp ASC")
-    suspend fun getUnsyncedNotes() : List<Note>
+    @Query("SELECT * FROM files WHERE isSynced = 0 AND isDeleted = 0 ORDER BY timeStamp ASC")
+    suspend fun getUnsyncedFiles() : List<FileMeta>
 
-    @Query("UPDATE notes SET isSynced = 1, servedId = :servedId , lastModified = :syncTime WHERE id = :localId")
-    suspend fun markNotesAsSynced(localId: Int, servedId: String, syncTime: Long) : Int
+    @Query("UPDATE files SET isSynced = 1, servedId = :servedId , lastModified = :syncTime WHERE id = :localId")
+    suspend fun markFileAsSynced(localId: Int, servedId: String, syncTime: Long) : Int
 
-    @Query("UPDATE notes SET isSynced = 0 WHERE id = :localId")
-    suspend fun markNoteUnsynced(localId: Int)
+    @Query("UPDATE files SET isSynced = 0 WHERE id = :localId")
+    suspend fun markFileAsUnsynced(localId: Int)
 
-    @Query("SELECT COUNT(*) FROM notes WHERE isSynced = 0")
-    suspend fun countUnsyncedNotes(): Int
+    @Query("UPDATE files SET isDeleted = 1, isSynced = 0 WHERE id = :localId")
+    suspend fun softDeleteFile(localId: Int)
 
-    @Query("UPDATE notes SET isDeleted = 1 , deletedAt = :deletedAt, isSynced = 0 WHERE id = :noteId")
-    suspend fun softDeleteNote(noteId: Int, deletedAt: Long)
+    @Query("SELECT * FROM files WHERE isDeleted = 1 AND isSynced = 0")
+    suspend fun getDeletedUnsyncedFiles(): List<FileMeta>
 
-    @Query("SELECT * FROM notes WHERE isDeleted = 1 AND isSynced = 0")
-    suspend fun getDeletedUnSyncedNotes() : List<Note>
-
-    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced = 0")
-    suspend fun hardDeleteSyncedNotes()
-
-    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced = 0 AND id = :localId")
-    suspend fun hardDeleteSyncedNoteById(localId: Int)
-
-    @Query("DELETE FROM notes WHERE id = :localId")
-    suspend fun hardDeleteNoteById(localId: Int)
-
-    @Query("DELETE FROM notes WHERE isDeleted = 1 AND isSynced = 1 AND deletedAt < :cutoffTime")
-    suspend fun hardDeleteOldSyncedNotes(cutoffTime: Long): Int
-
-    @Query("UPDATE notes SET syncError = :errorMessage WHERE id = :localId")
-    suspend fun markNoteSyncFailed(localId: Int, errorMessage: String)
-
+    @Query("DELETE FROM files WHERE id = :localId AND isDeleted = 1")
+    suspend fun hardDeleteFile(localId: Int)
 }

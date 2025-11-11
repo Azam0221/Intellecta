@@ -53,8 +53,8 @@ interface NoteDao {
     @Query("SELECT COUNT(*) FROM notes WHERE isSynced = 0")
     suspend fun countUnsyncedNotes(): Int
 
-    @Query("UPDATE notes SET isDeleted = 1 , deletedAt = :deletedAt, isSynced = 0 WHERE id = :noteId")
-    suspend fun softDeleteNote(noteId: Int, deletedAt: Long)
+    @Query("UPDATE notes SET isDeleted = 1 ,isSynced = 0 WHERE id = :noteId")
+    suspend fun softDeleteNote(noteId: Int)
 
     @Query("SELECT * FROM notes WHERE isDeleted = 1 AND isSynced = 0")
     suspend fun getDeletedUnSyncedNotes() : List<Note>

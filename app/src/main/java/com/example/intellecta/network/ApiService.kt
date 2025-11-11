@@ -29,6 +29,9 @@ interface ApiService{
     @POST("api/notes/sync")
     suspend fun syncNotes( @Body request: NoteSyncRequest ): Response<NoteSyncResponse>
 
+    @POST("api/files/sync")
+    suspend fun syncFiles( @Body request: FileSyncRequest ): Response<FileSyncResponse>
+
     @PUT("api/notes/{servedId}")
     suspend fun updateNotes(
         @Path("servedId") servedId: String,
@@ -37,9 +40,6 @@ interface ApiService{
 
     @DELETE("api/notes/{serverId}")
     suspend fun deleteNote(@Path("serverId") serverId: String): Response<Map<String, String>>
-
-    @POST("api/files")
-    suspend fun  syncFiles( @Body request: FileSyncRequest) : Response<FileSyncResponse>
 
     @DELETE("api/files/{serverId}")
     suspend fun deleteFile(@Path("serverId") serverId: String): Response<Map<String, String>>

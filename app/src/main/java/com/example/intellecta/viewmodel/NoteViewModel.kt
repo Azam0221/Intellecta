@@ -14,6 +14,7 @@ import com.example.intellecta.model.AttachedFile
 import com.example.intellecta.model.FileMeta
 import com.example.intellecta.model.NoteUiState
 import com.example.intellecta.worker.SyncManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -175,8 +176,10 @@ class NoteViewModel(
         viewModelScope.launch {
             noteRepository.updateNoteWithFiles(note,newFiles)
             loadNoteWithFiles(note.id)
-            SyncManager.syncNow(getApplication())
             Log.d("note" ,"notes updated $note")
+            delay(9000)
+            SyncManager.syncNow(getApplication())
+
         }
     }
 
@@ -184,8 +187,9 @@ class NoteViewModel(
         viewModelScope.launch {
             noteRepository.deleteNote(noteId)
             loadAllNotes()
-            SyncManager.syncNow(getApplication())
             Log.d("note" ,"notes updated $noteId")
+            delay(9000)
+            SyncManager.syncNow(getApplication())
         }
     }
 

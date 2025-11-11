@@ -24,11 +24,15 @@ data class FileMeta(
     var fileName : String, 
     var fileType : String,
     var fileData : String,
+    var timeStamp: Long = System.currentTimeMillis(),
+    var supabaseUrl : String? = null,
+
 
     var isSynced : Boolean = false, 
     var servedId : String? = null,
     var lastModified: Long = System.currentTimeMillis(),
     var syncError : String? = null,
+
 
     var isDeleted: Boolean = false,
     var deletedAt: Long? = null

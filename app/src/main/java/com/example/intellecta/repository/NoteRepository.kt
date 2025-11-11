@@ -36,6 +36,8 @@ class NoteRepository (
         newFiles : List<AttachedFile>
     ){
         noteDao.updateNote(note)
+        noteDao.markNoteUnsynced(note.id)
+
         val existingFiles = noteDao.getNoteWithFiles(note.id).files
         val newEntities = newFiles.map { file ->
             FileMeta(
@@ -81,7 +83,7 @@ class NoteRepository (
 
     suspend fun updateNote(note: Note) = noteDao.updateNote(note)
 
-    suspend fun deleteNote(noteId: Int) = noteDao.deleteNoteById(noteId)
+    suspend fun deleteNote(noteId: Int) = noteDao.softDeleteNote(noteId)
 
     suspend fun getAllNotes() = noteDao.getAllNotes()
 } 
