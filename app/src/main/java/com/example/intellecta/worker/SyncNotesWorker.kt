@@ -1,24 +1,23 @@
 package com.example.intellecta.worker
 
 import android.content.Context
-import android.content.ContextParams
 import android.util.Base64
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.intellecta.dao.FileDao
-import com.example.intellecta.dao.IntellectaDatabase
 import com.example.intellecta.dao.NoteDao
 import com.example.intellecta.data.TokenManager
-import com.example.intellecta.fileManaging.FileManager
 import com.example.intellecta.network.ApiService
 import com.example.intellecta.network.syncModels.FileSyncRequest
 import com.example.intellecta.network.syncModels.NoteSyncRequest
 import com.example.intellecta.repository.FileStorageRepository
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.koin.compose.koinInject
 import java.util.concurrent.TimeUnit
+
 
 class SyncNotesWorker(
     context: Context,
@@ -27,8 +26,9 @@ class SyncNotesWorker(
     private val noteDao: NoteDao,
     private val fileDao: FileDao,
     private val fileStorageRepository: FileStorageRepository,
-    private val tokenManager: TokenManager
-) : CoroutineWorker(context, params) {
+    private val tokenManager: TokenManager,
+    private val supabase : SupabaseClient
+): CoroutineWorker(context, params) {
 
     companion object {
         private const val TAG = "SyncNotesWorked"
@@ -38,6 +38,9 @@ class SyncNotesWorker(
 
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+
+        var notenoteFailCount = 0
+        var fileFailCount = 0
 
         try {
             Log.e(TAG, "DO Work started")
@@ -54,7 +57,12 @@ class SyncNotesWorker(
 
         try {
             Log.d(TAG, "Sync worker starting...")
-            var failCount = 0
+            var noteFailCount = 0
+
+
+            /**
+             ************* UPLOAD NOTES THROUGH BACKEND  *************
+             **/
 
             val unsyncedNotes = noteDao.getUnsyncedNotes()
             if(unsyncedNotes.isEmpty()){
@@ -95,7 +103,7 @@ class SyncNotesWorker(
 
                     } else {
                         Log.d(TAG, "Updating existing note: ${note.title}")
-                        val response = apiService.updateNotes(note.servedId!!, noteRequest) // PUT
+                        val response = apiService.updateNotes(note.servedId!!, noteRequest)
 
                         if (response.isSuccessful) {
                             backendNoteId = note.servedId!! // ID doesn't change
@@ -107,13 +115,143 @@ class SyncNotesWorker(
                     }
                 }
                 catch (e:Exception){
-                    failCount++
+                    noteFailCount++
                     Log.e(TAG, "Error syncing note: ${note.title}", e)
                 }
             }
 
-            Log.d(TAG, "Sync complete. Total failures: $failCount")
-            return@withContext if (failCount == 0) Result.success() else Result.retry()
+
+            /**
+             ************* DELETE NOTES  *************
+             **/
+
+
+            val deletedNotes = noteDao.getDeletedUnSyncedNotes()
+            if(deletedNotes.isEmpty()){
+                Log.d(TAG,"No notes to delete")
+            }
+            else{
+                Log.d(TAG,"${deletedNotes.size} notes to be deleted")
+            }
+
+            for(note in deletedNotes){
+                try {
+                    val response = apiService.deleteNote(note.servedId!!)
+
+                    if(response.isSuccessful){
+                        Log.d(TAG,"${response.body()}")
+                        Log.d(TAG,"Note deleted successfully")
+                    }
+                    else{
+                        throw Exception("Failed to update note: ${response.message()}")
+                    }
+                }catch (e:Exception){
+                    noteFailCount++
+                    Log.e(TAG, "Error syncing note: ${note.title}", e)
+                }
+            }
+
+
+            /**
+             ************* File Upload  *************
+             **/
+
+
+            val unsyncedFiles = fileDao.getUnsyncedFiles()
+            Log.e(TAG, "Found Unsynced Files: ${unsyncedFiles.size}")
+
+            for(fileMeta in unsyncedFiles){
+                try {
+                    if(fileMeta.servedId == null){
+                        Log.w(TAG, "Skipping file ${fileMeta.fileName}, parent note is not synced.")
+                        continue
+                    }
+
+                    // get the local files first
+                   val localFile = fileStorageRepository.getFile(fileMeta.fileData)
+                    if(!localFile.exists()){
+                        Log.e(TAG, "Local file not found, skipping: ${fileMeta.fileData}")
+                        noteFailCount++
+                        continue
+                    }
+
+                        // Reading the file
+                    val fileBytes = localFile.readBytes()
+
+                    val storagePath = "user-files/${fileMeta.servedId}/${fileMeta.fileName}"
+                    Log.d(TAG, "Uploading $storagePath to Supabase...")
+
+                    val uploadResponse = supabase.storage
+                        .from("intellecta-files") // Your bucket name
+                        .upload(storagePath, fileBytes, {
+                            upsert = true
+                        })
+
+                    val supabaseUrl = supabase.storage
+                        .from("intellecta-files")
+                        .publicUrl(storagePath)
+
+
+                    // Send the meta data to backend
+                    val fileRequest = FileSyncRequest(
+                        servedId = fileMeta.servedId!!,
+                        fileName = fileMeta.fileName,
+                        fileType = fileMeta.fileType,
+                        supabaseUrl = supabaseUrl
+                    )
+
+                    val response = apiService.syncFiles(fileRequest)
+                    if (response.isSuccessful && response.body() != null){
+                        val backendFileId = response.body()!!.id
+                        val syncTime = System.currentTimeMillis()
+                        fileDao.markFileAsSynced(fileMeta.id,backendFileId,syncTime)
+                        Log.d(TAG,"Files synced successfully")
+
+                    }
+                    else{
+                        throw Exception("Failed to sync file metadata: ${response.message()}")
+                    }
+
+                }
+                catch (e:Exception){
+                    fileFailCount++
+                    Log.e(TAG, "Error syncing file: ${fileMeta.fileName}", e)
+                }
+            }
+
+
+            /**
+             ********** DELETE FILES *********
+              **/
+
+
+            val deletedFiles = fileDao.getDeletedUnsyncedFiles()
+            for (fileMeta in deletedFiles) {
+                try {
+                    if (fileMeta.servedId == null) {
+                        fileDao.hardDeleteFile(fileMeta.id)
+                        continue
+                    }
+
+                    val response = apiService.deleteFile(fileMeta.servedId!!)
+                    if (response.isSuccessful) {
+                        fileDao.hardDeleteFile(fileMeta.id)
+                        Log.d(TAG, "File deleted: ${fileMeta.fileName}")
+                    } else {
+                        throw Exception("Failed to delete file: ${response.message()}")
+                    }
+                } catch (e: Exception) {
+                    fileFailCount++
+                    Log.e(TAG, "Error deleting file: ${fileMeta.fileName}", e)
+                }
+            }
+
+            // Delete files
+
+
+
+            Log.d(TAG, "Sync complete. Total failures: $noteFailCount")
+            return@withContext if (noteFailCount == 0) Result.success() else Result.retry()
         }
         catch (e:Exception){
             Log.e(TAG, "Sync worker failed", e)
@@ -136,7 +274,7 @@ class SyncNotesWorker(
 //    }
 
 //    private suspend fun syncDeletions(): Int {
-//        var failCount = 0
+//        var noteFailCount = 0
 //        val syncTime = System.currentTimeMillis()
 //
 //        // 1. Delete Files
@@ -158,7 +296,7 @@ class SyncNotesWorker(
 //                    }
 //                }
 //            } catch (e: Exception) {
-//                failCount++
+//                noteFailCount++
 //                Log.e(TAG, "Failed to sync file deletion: ${file.fileName}", e)
 //              //  fileDao.markFileSyncFailed(file.id, e.message ?: "Delete failed")
 //            }
@@ -182,20 +320,20 @@ class SyncNotesWorker(
 //                    }
 //                }
 //            } catch (e: Exception) {
-//                failCount++
+//                noteFailCount++
 //                Log.e(TAG, "Failed to sync note deletion: ${note.title}", e)
 //               // noteDao.markNoteSyncFailed(note.id, e.message ?: "Delete failed")
 //            }
 //        }
 //
-//        return failCount
+//        return noteFailCount
 //    }
 
     /**
      * Syncs all unsynced files for a specific note (CREATE-ONLY).
      */
 //    private suspend fun syncFilesForNote(localNoteId: Int, backendNoteId: String): Int {
-//        var failCount = 0
+//        var noteFailCount = 0
 //        val unsyncedFiles = fileDao.getUnsyncedFilesForNote(localNoteId)
 //        if (unsyncedFiles.isEmpty()) return 0
 //
@@ -236,12 +374,12 @@ class SyncNotesWorker(
 //                    throw Exception("Failed to sync file: ${fileResponse.message()}")
 //                }
 //            } catch (e: Exception) {
-//                failCount++
+//                noteFailCount++
 //                Log.e(TAG, "Failed to sync file: ${file.fileName}", e)
 //                fileDao.markFileSyncFailed(file.id, e.message ?: "Unknown file error")
 //            }
 //        }
-//        return failCount
+//        return noteFailCount
 //    }
 //
 
