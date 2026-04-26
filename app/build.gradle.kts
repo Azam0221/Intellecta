@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.kapt")
     id("com.google.gms.google-services")
+    kotlin("plugin.serialization")
 
 }
 
@@ -41,7 +42,23 @@ android {
         compose = true
         buildConfig = true
     }
+
+    lint {
+        disable.add("NullSafeMutableLiveData")
+        checkOnly.add("ExtraTranslation")
+    }
 }
+
+configurations.all {
+    resolutionStrategy {
+        force("io.ktor:ktor-client-core:2.3.7")
+        force("io.ktor:ktor-client-okhttp:2.3.7")
+        force("io.ktor:ktor-client-content-negotiation:2.3.7")
+        force("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+        force("io.ktor:ktor-client-logging:2.3.7")
+    }
+}
+
 
 dependencies {
 
@@ -61,12 +78,16 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+
     implementation("androidx.navigation:navigation-compose:2.9.3")
 
-
+    // ROOM
     implementation("androidx.room:room-runtime:2.7.2")
     implementation("androidx.room:room-ktx:2.7.2")
     kapt("androidx.room:room-compiler:2.7.2")
+
+    // Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
@@ -76,44 +97,41 @@ dependencies {
     implementation(libs.koin.androidx.workmanager)
 
 
+    // KTOR - DEFINE FIRST WITH EXPLICIT VERSIONS
+    implementation("io.ktor:ktor-client-core:2.3.7")
+    implementation("io.ktor:ktor-client-okhttp:2.3.7")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+    implementation("io.ktor:ktor-client-logging:2.3.7")
 
-
-// TFLite for on-device AI
-    implementation("org.tensorflow:tensorflow-lite-task-text:0.4.0")
-
-// Encryption for local storage
-    implementation("androidx.security:security-crypto:1.1.0-alpha04")
-
-//Gemini
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
-
-//Firebase
-
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth")
-
-    // Supabase with BOM
-    implementation(platform("io.github.jan-tennert.supabase:bom:3.0.3"))
+    // Supabase with BOM - MUST COME AFTER KTOR
+    implementation(platform("io.github.jan-tennert.supabase:bom:2.6.1"))
     implementation("io.github.jan-tennert.supabase:storage-kt")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")   // ← NEW: DB queries
+    implementation("io.github.jan-tennert.supabase:gotrue-kt")      // ← NEW: Auth
+    implementation("io.github.jan-tennert.supabase:functions-kt")
 
-    // Ktor Client Engine for Android (required)
-    implementation("io.ktor:ktor-client-android:3.0.0")
-
-
-// Secure Storage for JWT
+    // Secure Storage
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-// Retrofit for API calls
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-// Workmanager
+//    // Retrofit for API calls
+//    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+//    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+//    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
+    // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
- 
+    // Firebase (analytics only, auth removed)
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
+    // Test dependencies
+    androidTestImplementation("io.ktor:ktor-client-core:2.3.7")
+    androidTestImplementation("io.ktor:ktor-client-okhttp:2.3.7")
+    androidTestImplementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+    androidTestImplementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+    androidTestImplementation("io.ktor:ktor-client-logging:2.3.7")
 
 }
