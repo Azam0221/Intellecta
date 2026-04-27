@@ -20,20 +20,17 @@ import androidx.room.PrimaryKey
 data class FileMeta(
     @PrimaryKey(autoGenerate = true)
     var id : Int =0,
+    var userId: String? = null,
     var noteId : Int,
     var fileName : String, 
     var fileType : String,
     var fileData : String,
     var timeStamp: Long = System.currentTimeMillis(),
     var supabaseUrl : String? = null,
-
-
     var isSynced : Boolean = false, 
     var servedId : String? = null,
     var lastModified: Long = System.currentTimeMillis(),
     var syncError : String? = null,
-
-
     var isDeleted: Boolean = false,
     var deletedAt: Long? = null
 )
