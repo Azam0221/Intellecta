@@ -63,21 +63,7 @@ val appModule = module {
             IntellectaDatabase::class.java,
             "intellecta.db"
         )
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-
-    //OkHttp Client with Auth Interceptor
-    single {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
-        OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(get())) // Inject TokenManager
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
     }
 
