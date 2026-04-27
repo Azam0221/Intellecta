@@ -1,103 +1,100 @@
 package com.example.intellecta.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.intellecta.data.TokenManager
+import androidx.lifecycle.viewModelScope
 import com.example.intellecta.model.AuthState
-import com.google.firebase.auth.FirebaseAuth
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.gotrue.providers.builtin.Email
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
+import kotlinx.coroutines.launch
 
 
 class AuthViewModel(
-    private val tokenManager: TokenManager
+    private val supabase: SupabaseClient
 ): ViewModel() {
 
-    private val auth : FirebaseAuth = FirebaseAuth.getInstance()
 
     private val  _authState  = MutableStateFlow<AuthState>(AuthState.Unauthenticated)
     var authState : StateFlow<AuthState> = _authState
 
     init {
-        if(auth.currentUser==null){
-            _authState.value = AuthState.Unauthenticated
-        }
-        else if(auth.currentUser != null && tokenManager.hasToken()){
-            _authState.value = AuthState.Authenticated
+        checkSession()
+    }
+
+    private fun checkSession(){
+        viewModelScope.launch {
+            try {
+                val session = supabase.auth.currentSessionOrNull()
+                if(session != null){
+                    _authState.value = AuthState.Authenticated
+                }
+                else{
+                    _authState.value = AuthState.Unauthenticated
+                }
+            }
+            catch (e: Exception) {
+                _authState.value = AuthState.Unauthenticated
+            }
         }
     }
 
     fun login(email: String, password: String){
-        _authState.value = AuthState.Loading
 
-        if(email.isEmpty()||password.isEmpty()){
+        if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthState.Error("Email or password cannot be empty")
             return
         }
         _authState.value = AuthState.Loading
-        auth.signInWithEmailAndPassword(email,password)
-            .addOnCompleteListener { task->
-                if(task.isSuccessful){
-                    task.result.user?.getIdToken(true)?.addOnCompleteListener { tokenTask->
-                        if(tokenTask.isSuccessful) {
-                            val jwtToken = tokenTask.result?.token
-                            if (jwtToken != null) {
-                                tokenManager.saveToken(jwtToken)
-                                _authState.value = AuthState.Authenticated
-                            } else {
-                                _authState.value = AuthState.Error("Failed to get token")
-                            }
-                        }
-                        else {
-                            _authState.value = AuthState.Error(
-                                tokenTask.exception?.message ?: "Token error"
-                            )
-                        }
-                    }
+        viewModelScope.launch {
+            try {
+                supabase.auth.signInWith(Email){
+                    this.email = email
+                    this.password = password
                 }
-                else{
-                    _authState.value = AuthState.Error("Something went wrong")
-                }
+                _authState.value = AuthState.Authenticated
+            }catch (e: Exception){
+                _authState.value = AuthState.Error("Login Failed")
             }
+        }
     }
 
-    fun  signUp(email:String , password: String){
-        _authState.value = AuthState.Loading
-        if(email.isEmpty()||password.isEmpty()){
+    fun  signUp(email:String , password: String) {
+
+        if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthState.Error("Email or password cannot be empty")
             return
         }
         _authState.value = AuthState.Loading
-        auth.createUserWithEmailAndPassword(email,password)
-            .addOnCompleteListener { task->
-                if(task.isSuccessful){
-                    task.result.user?.getIdToken(true)?.addOnCompleteListener { tokenTask ->
-                        if (tokenTask.isSuccessful) {
-                            val jwtToken = tokenTask.result?.token
-                            if (jwtToken != null) {
-                                tokenManager.saveToken(jwtToken)
-                                _authState.value = AuthState.Authenticated
-                            } else {
-                                _authState.value = AuthState.Error("Failed to get token")
-                            }
-                        } else {
-                            _authState.value = AuthState.Error(
-                                tokenTask.exception?.message ?: "Token error"
-                            )
-                        }
-                    }
+        viewModelScope.launch {
+            try {
+                supabase.auth.signUpWith(Email) {
+                    this.email = email
+                    this.password = password
                 }
-                else{
-                    _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
-
-                }
+                _authState.value = AuthState.Authenticated
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(e.message ?: "Signup failed")
             }
+        }
     }
 
-    fun signout(){
-        auth.signOut()
-        tokenManager.clearToken()
-        _authState.value = AuthState.Unauthenticated
+    fun signOut(){
+        viewModelScope.launch {
+            try {
+                supabase.auth.signOut()
+            }catch (e: Exception){
+                println(e.message)
+            }
+            finally {
+                _authState.value = AuthState.Unauthenticated
+            }
+        }
+    }
+
+    fun getCurrentUserId(): String? {
+        return supabase.auth.currentUserOrNull()?.id
     }
 
 
