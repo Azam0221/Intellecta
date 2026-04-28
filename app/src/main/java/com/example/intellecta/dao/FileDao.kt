@@ -48,7 +48,7 @@ interface FileDao {
     @Query("UPDATE files SET isSynced = 0 WHERE id = :localId")
     suspend fun markFileAsUnsynced(localId: Int)
 
-    @Query("UPDATE files SET isDeleted = 1, isSynced = 0 WHERE id = :localId")
+    @Query("UPDATE files SET isDeleted = 1, isSynced = 0, servedId = NULL  WHERE id = :localId")
     suspend fun softDeleteFile(localId: Int)
 
     @Query("SELECT * FROM files WHERE isDeleted = 1 AND isSynced = 0")
@@ -56,4 +56,12 @@ interface FileDao {
 
     @Query("DELETE FROM files WHERE id = :localId AND isDeleted = 1")
     suspend fun hardDeleteFile(localId: Int)
+
+    @Query("DELETE FROM files WHERE isSynced = 0 AND isDeleted = 1")
+    suspend fun deleteAllUnsyncedFiles()
+
+    @Query("DELETE FROM files WHERE isDeleted = 1 AND servedId IS NULL")
+    suspend fun hardDeleteUnsyncedDeletedFiles()
+
+
 }
