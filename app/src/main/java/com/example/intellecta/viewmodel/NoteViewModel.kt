@@ -13,6 +13,7 @@ import com.example.intellecta.repository.NoteRepository
 import com.example.intellecta.model.AttachedFile
 import com.example.intellecta.model.FileMeta
 import com.example.intellecta.model.NoteUiState
+import com.example.intellecta.repository.RagRepository
 import com.example.intellecta.worker.SyncManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,9 @@ import kotlinx.coroutines.launch
 
 class NoteViewModel(
     private val noteRepository: NoteRepository,
-    private val fileManager: FileManager, 
+    private val fileManager: FileManager,
+    private val ragRepository: RagRepository,
+    private val authViewModel: AuthViewModel,
     application: Application
  ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(NoteUiState())
@@ -37,31 +40,6 @@ class NoteViewModel(
     }
 
 
-//    fun onTitleChange(newValue: String) {
-//        _uiState.value = _uiState.value.copy(
-//            note = _uiState.value.note.c opy(title = newValue)
-//        )
-//    }
-//
-//    fun onContentChange(newValue: String) {
-//        _uiState.value = _uiState.value.copy(
-//            note = _uiState.value.note.copy(content = newValue)
-//        )
-//    }
-//
-//    fun onSummaryChange(newValue: String) {
-//        _uiState.value = _uiState.value.copy(
-//            note = _uiState.value.note.copy(summary = newValue)
-//        )
-//    }
-//
-//    fun onCategoryChange(newValue: String) {
-//        _uiState.value = _uiState.value.copy(
-//            note = _uiState.value.note.copy(category = newValue)
-//        )
-//    }
-
-
     fun saveNote() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
@@ -71,12 +49,23 @@ class NoteViewModel(
                     _uiState.update { it.copy(error = "Title or Content cannot be empty") }
                     return@launch
                 }
-                noteRepository.insertNoteWithFiles(note, _uiState.value.attachedFiles)
+                val noteId = noteRepository.insertNoteWithFiles(note, _uiState.value.attachedFiles)
                 _uiState.value = _uiState.value.copy(
-                    isSaved = true, error = null , isLoading = false,
+                    isSaved = true, error = null, isLoading = false,
                     attachedFiles = emptyList()
                 )
                 SyncManager.syncNow(getApplication())
+                val userId = authViewModel.getCurrentUserId()
+                val servedId = noteRepository.getNote(noteId.toInt())?.servedId
+                if (userId != null && servedId != null) {
+                    ragRepository.indexNote(
+                        noteId = servedId,
+                        userId = userId,
+                        title = note.title,
+                        content = note.content
+                    )
+                }
+
                 Log.d("note" ,"notes added $note")
             }
             catch (e : Exception){
@@ -179,6 +168,16 @@ class NoteViewModel(
             Log.d("note" ,"notes updated $note")
             delay(9000)
             SyncManager.syncNow(getApplication())
+
+            val userId = authViewModel.getCurrentUserId()
+            if (userId != null && note.servedId != null) {
+                ragRepository.indexNote(
+                    noteId = note.servedId!!,
+                    userId = userId,
+                    title = note.title,
+                    content = note.content
+                )
+            }
 
         }
     }

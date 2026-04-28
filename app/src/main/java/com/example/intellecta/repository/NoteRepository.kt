@@ -13,7 +13,7 @@ class NoteRepository (
     private val fileStorageRepository: FileStorageRepository
 ) {
 
-    suspend fun insertNoteWithFiles(note: Note,files:List<AttachedFile>){
+    suspend fun insertNoteWithFiles(note: Note,files:List<AttachedFile>): Long{
         val noteId = noteDao.insertNote(note)
         files.forEach { attachedFile ->
             val fileName = attachedFile.displayName
@@ -29,6 +29,8 @@ class NoteRepository (
                 fileDao.insertFile(fileMeta)
             }
         }
+
+        return noteId
     }
 
     suspend fun updateNoteWithFiles(

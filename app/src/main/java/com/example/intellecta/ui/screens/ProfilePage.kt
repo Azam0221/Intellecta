@@ -66,7 +66,7 @@ fun ProfilePage(navCtrl: NavHostController){
     ){
 
         Button(
-            onClick = {  viewModel.signout() },
+            onClick = {  viewModel.signOut() },
 
             modifier = Modifier
                 .fillMaxWidth()
