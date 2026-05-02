@@ -72,7 +72,9 @@ class SyncFileWorker(
                     }
 
                     val fileBytes = localFile.readBytes()
-                    val storagePath = "$userId/${parentNoteServedId}/${fileMeta.fileName}"
+                    val cleanFileName = fileMeta.fileName.replace(Regex("[^a-zA-Z0-9.\\-]"), "_")
+
+                    val storagePath = "$userId/${parentNoteServedId}/$cleanFileName"
 
                     // upload to Supabase Storage
 
@@ -134,12 +136,11 @@ class SyncFileWorker(
                         fileDao.hardDeleteFile(fileMeta.id)
                         continue
                     }
-                    val parentNote = noteDao.getNote(fileMeta.noteId)
-                    val userId = supabase.auth.currentUserOrNull()?.id
 
-                    if (userId != null && parentNote?.servedId != null) {
-                        val storagePath = "$userId/${parentNote.servedId}/${fileMeta.fileName}"
+                    if (!fileMeta.supabaseUrl.isNullOrEmpty()) {
                         try {
+                            val storagePath = fileMeta.supabaseUrl!!
+                                .substringAfter("$BUCKET/")
                             supabase.storage
                                 .from(BUCKET)
                                 .delete(listOf(storagePath))
@@ -147,6 +148,8 @@ class SyncFileWorker(
                         } catch (e: Exception) {
                             Log.w(TAG, "Storage delete failed for ${fileMeta.fileName} — may not exist")
                         }
+                    } else {
+                        Log.w(TAG, "No supabaseUrl for ${fileMeta.fileName} — skipping storage delete")
                     }
 
                     // soft delete on Supabase DB
@@ -156,7 +159,7 @@ class SyncFileWorker(
                             filter { eq("id", fileMeta.servedId!!) }
                         }
 
-                    fileDao.softDeleteFile(fileMeta.id)
+                    fileDao.clearServedIdAndMarkSynced(fileMeta.id)
                     Log.d(TAG, "File deleted: ${fileMeta.fileName}")
 
                 } catch (e: Exception) {

@@ -95,7 +95,7 @@ class NoteViewModel(
         }
     }
 
-    fun loadNoteWithFiles(noteId : Int) {
+    private fun loadNoteWithFiles(noteId : Int) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {

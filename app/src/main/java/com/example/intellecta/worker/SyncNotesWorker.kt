@@ -122,19 +122,13 @@ class SyncNotesWorker(
 
             for (note in deletedNotes) {
                 try {
-                    if (note.servedId == null) {
-                        // never synced, just hard delete locally
-                        noteDao.hardDeleteSyncedNoteById(note.id)
-                        continue
-                    }
-
                     supabase.postgrest
                         .from("notes")
-                        .update(mapOf("is_deleted" to true)) {
+                        .delete {
                             filter { eq("id", note.servedId!!) }
                         }
 
-                    noteDao.softDeleteNote(note.id)
+                    noteDao.clearServedIdAndMarkSynced(note.id)
                     Log.d(TAG, "Note deleted: ${note.title}")
 
                 } catch (e: Exception) {
